@@ -50,12 +50,12 @@
             font-weight: bold;
             text-align: center;
             display: block;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .crest-container {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,8 +78,34 @@
             align-items: baseline;
             justify-content: center;
             width: 100%;
-            gap: 15px;
+            gap: 12px;
             white-space: nowrap;
+        }
+        
+        .signature-block {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .date-input-container {
+            width: 180px;
+            text-align: center;
+        }
+
+        .sign-line-container {
+            flex-grow: 1;
+        }
+
+        .custom-line {
+            border-bottom: 1.5px solid black;
+            padding-bottom: 2px;
+            min-height: 28px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -90,9 +116,16 @@
         const { useState, useEffect } = React;
 
         function App() {
-            // Brasão fixo conforme solicitado (brasao.png na mesma pasta)
+            // Data de hoje formatada DD/MM/AAAA
+            const getTodayDate = () => {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                return `${day}/${month}/${year}`;
+            };
+
             const [logo, setLogo] = useState('./brasao.png');
-            
             const [formData, setFormData] = useState({
                 nomeAluno: '',
                 ano: '',
@@ -100,6 +133,7 @@
                 turno: '',
                 anoLetivo: new Date().getFullYear().toString(),
                 professor: '',
+                dataHoje: getTodayDate(),
             });
 
             const handleChange = (e) => {
@@ -123,21 +157,20 @@
 
             return (
                 <div className="flex flex-col lg:flex-row min-h-screen">
-                    {/* Painel lateral de preenchimento (Oculto na Impressão) */}
+                    {/* Painel lateral de preenchimento */}
                     <div className="no-print w-full lg:w-[400px] bg-white border-r border-slate-300 p-6 shadow-xl z-10 overflow-y-auto">
                         <div className="flex items-center gap-3 mb-8 text-blue-900 border-b pb-4">
                             <i data-lucide="file-edit"></i>
                             <h1 className="text-xl font-bold uppercase tracking-tight">Preenchimento</h1>
                         </div>
 
-                        <div className="space-y-5">
+                        <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nome Completo do Aluno</label>
                                 <input 
                                     name="nomeAluno" 
                                     className="w-full p-2 border-2 border-slate-200 rounded focus:border-blue-500 outline-none uppercase font-semibold text-sm"
                                     onChange={handleChange}
-                                    placeholder="Ex: JOÃO DA SILVA"
                                 />
                             </div>
 
@@ -168,12 +201,22 @@
                                 <input name="professor" className="w-full p-2 border-2 border-slate-200 rounded text-sm uppercase" onChange={handleChange} />
                             </div>
 
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data do Documento</label>
+                                <input 
+                                    name="dataHoje" 
+                                    className="w-full p-2 border-2 border-slate-200 rounded text-sm" 
+                                    value={formData.dataHoje} 
+                                    onChange={handleChange} 
+                                />
+                            </div>
+
                             <button 
                                 onClick={handlePrint}
-                                className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg transition-all transform hover:-translate-y-1 active:scale-95"
+                                className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg transition-all transform hover:-translate-y-1 active:scale-95 mt-4"
                             >
                                 <i data-lucide="printer"></i>
-                                IMPRIMIR AGORA
+                                IMPRIMIR REQUERIMENTO
                             </button>
 
                             <div className="pt-6 border-t mt-6">
@@ -190,7 +233,7 @@
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho Institucional - ALINHADO À ESQUERDA */}
+                            {/* Cabeçalho - Alinhado à Esquerda */}
                             <div className="flex items-center justify-start gap-6 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
@@ -207,7 +250,7 @@
                                 </div>
                             </div>
 
-                            {/* Títulos - Centralizados conforme o padrão de documentos */}
+                            {/* Títulos */}
                             <div className="text-center mb-10">
                                 <h1 className="text-[26pt] font-bold italic mb-8">Requerimento de Transferência</h1>
                                 <h2 className="text-[13pt] font-normal uppercase tracking-widest mt-4">
@@ -217,42 +260,41 @@
 
                             {/* Nome do Aluno */}
                             <div className="mb-10 mt-14">
-                                <div className="border-b border-black w-full min-h-[30px] flex items-end justify-center px-2 font-bold text-[14pt] uppercase">
+                                <div className="custom-line w-full text-[14pt] uppercase">
                                     {formData.nomeAluno}
                                 </div>
                                 <span className="line-label-below uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Linha de Dados: Centralizada e Equilibrada */}
+                            {/* Informações Escolares */}
                             <div className="info-row mb-10 text-[11pt]">
-                                <div className="flex items-baseline">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[65px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[80px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.ano}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Série:</span>
-                                    <div className="border-b border-black w-[60px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[80px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {" "}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black w-[50px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[60px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.turma}
                                     </div>
                                 </div>
-                                {/* Espaço amplo para Turno (Matutino/Vespertino) */}
-                                <div className="flex items-baseline">
+                                <div className="flex items-baseline min-w-[160px]">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black w-[150px] text-center font-bold uppercase px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black flex-grow text-center font-bold uppercase px-1 min-h-[1.2rem]">
                                         {formData.turno}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[80px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[90px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.anoLetivo}
                                     </div>
                                 </div>
@@ -261,44 +303,46 @@
                             {/* Professor(a) */}
                             <div className="flex items-baseline mb-16 text-[12pt]">
                                 <span className="mr-2 whitespace-nowrap">Prof. (a):</span>
-                                <div className="border-b border-black flex-grow font-bold px-2 uppercase min-h-[1.4rem]">
+                                <div className="border-b border-black flex-grow font-bold px-2 uppercase min-h-[1.4rem] text-center">
                                     {formData.professor}
                                 </div>
                             </div>
 
-                            {/* Mensagem Central */}
-                            <div className="text-center font-bold text-[18pt] my-20 uppercase">
+                            <div className="text-center font-bold text-[18pt] my-20 uppercase tracking-wide">
                                 Requer sua Transferência
                             </div>
 
-                            {/* Assinaturas e Datas */}
+                            {/* Seção de Assinaturas Harmoniosa */}
                             <div className="space-y-16">
-                                <div className="flex gap-8 items-start">
-                                    <div className="w-[180px] shrink-0">
-                                        <div className="border-b border-black h-8 flex justify-between px-4 items-end font-bold text-lg">
-                                            <span>/</span><span>/</span>
+                                {/* Primeira Assinatura (Preenchida com hoje) */}
+                                <div className="signature-block">
+                                    <div className="date-input-container">
+                                        <div className="custom-line">
+                                            {formData.dataHoje}
                                         </div>
                                         <span className="line-label-below uppercase">Data</span>
                                     </div>
-                                    <div className="flex-grow">
-                                        <div className="border-b border-black h-8"></div>
+                                    <div className="sign-line-container">
+                                        <div className="custom-line"></div>
                                         <span className="line-label-below uppercase">Assinatura do Aluno ou Responsável</span>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-8 items-start">
-                                    <div className="w-[180px] shrink-0">
-                                        <div className="border-b border-black h-8 flex justify-between px-4 items-end font-bold text-lg">
-                                            <span>/</span><span>/</span>
+                                {/* Segunda Assinatura (Em branco) */}
+                                <div className="signature-block">
+                                    <div className="date-input-container">
+                                        <div className="custom-line">
+                                            ___/___/___
                                         </div>
                                         <span className="line-label-below uppercase">Data</span>
                                     </div>
-                                    <div className="flex-grow">
-                                        <div className="border-b border-black h-8"></div>
+                                    <div className="sign-line-container">
+                                        <div className="custom-line"></div>
                                         <span className="line-label-below uppercase">Recebi a Documentação</span>
                                     </div>
                                 </div>
 
+                                {/* Deferimento Final */}
                                 <div className="mt-24">
                                     <div className="border-b-2 border-black w-full h-8"></div>
                                     <span className="line-label-below uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
