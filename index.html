@@ -1,211 +1,280 @@
-import React, { useState } from 'react';
-import { Printer, ClipboardCheck } from 'lucide-react';
-
-const App = () => {
-  const [formData, setFormData] = useState({
-    nomeAluno: '',
-    ano: '',
-    serie: '',
-    turma: '',
-    turno: '',
-    anoLetivo: new Date().getFullYear().toString(),
-    professor: '',
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-200 p-4 md:p-8 font-sans print:p-0 print:bg-white">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8 print:block">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Requerimento - Escola Walda Miranda de Paiva</title>
+    <!-- Tailwind CSS para o design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React e Babel para funcionar direto no navegador -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        {/* Painel de Entrada de Dados */}
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-300 print:hidden h-fit sticky top-8">
-          <div className="flex items-center gap-2 mb-6 text-slate-800 border-b pb-4">
-            <ClipboardCheck size={24} />
-            <h1 className="text-xl font-bold">Preencher Requerimento</h1>
-          </div>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Aluno</label>
-              <input
-                type="text"
-                name="nomeAluno"
-                className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:border-blue-600 outline-none uppercase font-semibold"
-                onChange={handleInputChange}
-                value={formData.nomeAluno}
-              />
-            </div>
+        @media print {
+            @page { 
+                size: A4; 
+                margin: 0; 
+            }
+            body { 
+                background: white !important; 
+            }
+            .no-print { 
+                display: none !important; 
+            }
+            .print-area {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 1.5cm !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+        }
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Ano</label>
-                <input type="text" name="ano" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Série</label>
-                <input type="text" name="serie" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
-              </div>
-            </div>
+        .official-doc-font {
+            font-family: Arial, sans-serif;
+        }
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Turma</label>
-                <input type="text" name="turma" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Turno</label>
-                <input type="text" name="turno" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
-              </div>
-            </div>
+        .line-label {
+            font-size: 9pt;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            margin-top: 2px;
+        }
 
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Professor(a)</label>
-              <input type="text" name="professor" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
-            </div>
+        /* Estilo para simular o brasão da imagem */
+        .crest-placeholder {
+            width: 80px;
+            height: 90px;
+            border: 2px solid #333;
+            border-radius: 0 0 40px 40px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+    <div id="root"></div>
 
-            <button
-              onClick={handlePrint}
-              className="w-full mt-6 bg-slate-900 hover:bg-black text-white font-bold py-4 rounded shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-95"
-            >
-              <Printer size={20} />
-              GERAR IMPRESSÃO
-            </button>
-          </div>
-        </div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-        {/* O DOCUMENTO (IDÊNTICO À IMAGEM) */}
-        <div className="bg-white shadow-2xl p-[1.5cm] md:p-[2.5cm] min-h-[29.7cm] w-full max-w-[21cm] mx-auto print:shadow-none print:p-[1.5cm] print:m-0" id="document-preview">
-          <style>
-            {`
-              @media print {
-                @page { size: A4; margin: 0; }
-                body { background: white; }
-                .print-hidden { display: none !important; }
-              }
-              .official-font { font-family: 'Arial', sans-serif; }
-              .line-label { font-size: 10pt; font-weight: bold; text-align: center; display: block; margin-top: 2px; }
-            `}
-          </style>
-          
-          <div className="official-font text-black leading-normal">
-            
-            {/* Cabeçalho Institucional com Brasão */}
-            <div className="flex items-center gap-6 mb-12">
-              <div className="w-24 h-24 shrink-0">
-                <svg viewBox="0 0 100 100" className="w-full h-full fill-slate-800">
-                  <path d="M50 5 L15 20 L15 50 C15 75 50 95 50 95 C50 95 85 75 85 50 L85 20 L50 5 Z" fill="none" stroke="currentColor" strokeWidth="2"/>
-                  <rect x="30" y="30" width="40" height="30" fill="none" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M30 45 H70 M50 30 V60" stroke="currentColor" strokeWidth="1"/>
-                  <text x="50" y="85" fontSize="8" textAnchor="middle" fontWeight="bold">FORMOSA</text>
-                </svg>
-              </div>
-              <div className="text-[12pt] font-bold leading-tight">
-                <p>ESTADO DE GOIÁS</p>
-                <p>PREFEITURA MUNICIPAL DE FORMOSA</p>
-                <p>SECRETARIA MUNICIPAL DE EDUCAÇÃO</p>
-              </div>
-            </div>
+        function App() {
+            const [formData, setFormData] = useState({
+                nomeAluno: '',
+                ano: '',
+                serie: '',
+                turma: '',
+                turno: '',
+                anoLetivo: new Date().getFullYear().toString(),
+                professor: '',
+            });
 
-            {/* Títulos */}
-            <div className="text-center mb-12">
-              <h1 className="text-[22pt] font-bold italic mb-8">Requerimento de Transferência</h1>
-              <h2 className="text-[12pt] font-normal uppercase tracking-wide">ESCOLA MUNICIPAL WALDA MIRANDA DE PAIVA</h2>
-            </div>
+            const handleChange = (e) => {
+                setFormData({ ...formData, [e.target.name]: e.target.value });
+            };
 
-            {/* Nome do Aluno (Linha com legenda abaixo) */}
-            <div className="mb-8">
-              <div className="border-b-2 border-black w-full min-h-[35px] flex items-end px-2 font-bold text-[14pt] uppercase">
-                {formData.nomeAluno}
-              </div>
-              <span className="line-label uppercase">Nome do Aluno</span>
-            </div>
+            const handlePrint = () => {
+                window.print();
+            };
 
-            {/* Linha de Info (Ano, Série, etc) */}
-            <div className="flex flex-wrap gap-x-4 gap-y-6 mb-8 text-[11pt]">
-              <div className="flex items-baseline">
-                <span className="mr-1">Ano:</span>
-                <span className="border-b border-black w-16 text-center font-bold px-1">{formData.ano}</span>
-              </div>
-              <div className="flex items-baseline">
-                <span className="mr-1">Série:</span>
-                <span className="border-b border-black w-16 text-center font-bold px-1">{formData.serie}</span>
-              </div>
-              <div className="flex items-baseline">
-                <span className="mr-1">Turma:</span>
-                <span className="border-b border-black w-12 text-center font-bold px-1">{formData.turma}</span>
-              </div>
-              <div className="flex items-baseline">
-                <span className="mr-1">Turno:</span>
-                <span className="border-b border-black w-32 text-center font-bold px-1">{formData.turno}</span>
-              </div>
-              <div className="flex items-baseline">
-                <span className="mr-1">Ano Letivo:</span>
-                <span className="border-b border-black w-24 text-center font-bold px-1">{formData.anoLetivo}</span>
-              </div>
-            </div>
+            return (
+                <div className="flex flex-col lg:flex-row min-h-screen">
+                    {/* Sidebar de Formulário - Oculta na Impressão */}
+                    <div className="no-print w-full lg:w-[400px] bg-white border-r border-slate-300 p-6 shadow-xl z-10 overflow-y-auto">
+                        <div className="flex items-center gap-3 mb-8 text-blue-900 border-b pb-4">
+                            <i data-lucide="file-text"></i>
+                            <h1 className="text-xl font-bold uppercase tracking-tight">Painel de Controle</h1>
+                        </div>
 
-            {/* Professor */}
-            <div className="flex items-baseline mb-16">
-              <span className="mr-2">Prof. (a):</span>
-              <span className="border-b border-black flex-grow font-bold px-2">{formData.professor}</span>
-            </div>
+                        <div className="space-y-5">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nome Completo do Aluno</label>
+                                <input 
+                                    name="nomeAluno" 
+                                    className="w-full p-2 border-2 border-slate-200 rounded focus:border-blue-500 outline-none uppercase font-semibold text-sm"
+                                    onChange={handleChange}
+                                    placeholder="Digite o nome..."
+                                />
+                            </div>
 
-            {/* Mensagem Central */}
-            <div className="text-center font-bold text-[16pt] mb-20">
-              Requer sua Transferência
-            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
+                                    <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Série</label>
+                                    <input name="serie" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} />
+                                </div>
+                            </div>
 
-            {/* Bloco de Datas e Assinaturas (Fiel ao layout da imagem) */}
-            <div className="space-y-16">
-              
-              {/* Assinatura do Aluno */}
-              <div className="flex gap-4">
-                <div className="w-[180px]">
-                  <div className="border-b border-black flex justify-around px-1 font-bold">
-                    <span>&nbsp;</span>/<span>&nbsp;</span>/<span>&nbsp;</span>
-                  </div>
-                  <span className="line-label uppercase">Data:</span>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
+                                    <input name="turma" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turno</label>
+                                    <input name="turno" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} placeholder="Ex: Matutino" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Professor(a)</label>
+                                <input name="professor" className="w-full p-2 border-2 border-slate-200 rounded text-sm uppercase" onChange={handleChange} />
+                            </div>
+
+                            <button 
+                                onClick={handlePrint}
+                                className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg transition-all transform hover:-translate-y-1 active:scale-95"
+                            >
+                                <i data-lucide="printer"></i>
+                                IMPRIMIR REQUERIMENTO
+                            </button>
+                        </div>
+
+                        <div className="mt-12 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h3 className="text-blue-900 font-bold text-xs uppercase flex items-center gap-1 mb-2">
+                                <i data-lucide="info" size="14"></i> Dica de Uso
+                            </h3>
+                            <p className="text-xs text-blue-700 leading-relaxed">
+                                No menu de impressão, selecione "Salvar como PDF" ou escolha sua impressora. Certifique-se de que a escala esteja em 100%.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Área do Documento */}
+                    <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
+                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2cm] text-black official-doc-font">
+                            
+                            {/* Cabeçalho */}
+                            <div className="flex items-center gap-6 mb-10">
+                                <div className="crest-placeholder shrink-0">
+                                    <div className="w-10 h-6 border border-black mb-1"></div>
+                                    <span className="text-[8px] font-bold text-center leading-none">FORMOSA-GO<br/>1950</span>
+                                </div>
+                                <div className="text-[12pt] font-bold leading-tight uppercase">
+                                    <p>Estado de Goiás</p>
+                                    <p>Prefeitura Municipal de Formosa</p>
+                                    <p>Secretaria Municipal de Educação</p>
+                                </div>
+                            </div>
+
+                            {/* Títulos Principais */}
+                            <div className="text-center mb-10">
+                                <h1 className="text-[24pt] font-bold italic mb-6">Requerimento de Transferência</h1>
+                                <h2 className="text-[12pt] font-normal uppercase tracking-[0.1em] border-b border-black inline-block pb-1">
+                                    Escola Municipal Walda Miranda de Paiva
+                                </h2>
+                            </div>
+
+                            {/* Linha: Nome do Aluno */}
+                            <div className="mb-10">
+                                <div className="border-b-2 border-black w-full min-h-[35px] flex items-end px-2 font-bold text-[14pt] uppercase">
+                                    {formData.nomeAluno}
+                                </div>
+                                <span className="line-label uppercase">Nome do Aluno</span>
+                            </div>
+
+                            {/* Linha de Info Composta */}
+                            <div className="flex flex-wrap items-end gap-x-4 gap-y-8 mb-10 text-[11pt]">
+                                <div className="flex-1 min-w-[100px]">
+                                    <div className="border-b-2 border-black h-8 flex items-end justify-center font-bold">{formData.ano}</div>
+                                    <span className="line-label uppercase">Ano</span>
+                                </div>
+                                <div className="flex-1 min-w-[100px]">
+                                    <div className="border-b-2 border-black h-8 flex items-end justify-center font-bold">{formData.serie}</div>
+                                    <span className="line-label uppercase">Série</span>
+                                </div>
+                                <div className="flex-1 min-w-[80px]">
+                                    <div className="border-b-2 border-black h-8 flex items-end justify-center font-bold">{formData.turma}</div>
+                                    <span className="line-label uppercase">Turma</span>
+                                </div>
+                                <div className="flex-[2] min-w-[150px]">
+                                    <div className="border-b-2 border-black h-8 flex items-end justify-center font-bold uppercase">{formData.turno}</div>
+                                    <span className="line-label uppercase">Turno</span>
+                                </div>
+                                <div className="flex-1 min-w-[100px]">
+                                    <div className="border-b-2 border-black h-8 flex items-end justify-center font-bold">{formData.anoLetivo}</div>
+                                    <span className="line-label uppercase">Ano Letivo</span>
+                                </div>
+                            </div>
+
+                            {/* Professor */}
+                            <div className="mb-14">
+                                <div className="border-b-2 border-black w-full h-8 flex items-end px-2 font-bold uppercase">
+                                    {formData.professor}
+                                </div>
+                                <span className="line-label uppercase">Prof. (a)</span>
+                            </div>
+
+                            {/* Chamada Central */}
+                            <div className="text-center font-bold text-[18pt] my-16 tracking-widest uppercase">
+                                Requer sua Transferência
+                            </div>
+
+                            {/* Seção de Assinaturas (Layout de Grade) */}
+                            <div className="space-y-16">
+                                {/* Assinatura 1 */}
+                                <div className="flex gap-8 items-start">
+                                    <div className="w-[180px]">
+                                        <div className="border-b-2 border-black h-8 flex justify-between px-4 items-end font-bold text-lg">
+                                            <span>/</span><span>/</span>
+                                        </div>
+                                        <span className="line-label uppercase">Data</span>
+                                    </div>
+                                    <div className="flex-grow">
+                                        <div className="border-b-2 border-black h-8"></div>
+                                        <span className="line-label uppercase">Assinatura do Aluno ou Responsável</span>
+                                    </div>
+                                </div>
+
+                                {/* Assinatura 2 */}
+                                <div className="flex gap-8 items-start">
+                                    <div className="w-[180px]">
+                                        <div className="border-b-2 border-black h-8 flex justify-between px-4 items-end font-bold text-lg">
+                                            <span>/</span><span>/</span>
+                                        </div>
+                                        <span className="line-label uppercase">Data</span>
+                                    </div>
+                                    <div className="flex-grow">
+                                        <div className="border-b-2 border-black h-8"></div>
+                                        <span className="line-label uppercase">Recebi a Documentação</span>
+                                    </div>
+                                </div>
+
+                                {/* Deferimento Final */}
+                                <div className="mt-20">
+                                    <div className="border-b-2 border-black w-full h-10"></div>
+                                    <span className="line-label uppercase text-[11pt]">Deferimento do Diretor / Secretário</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-                <div className="flex-grow">
-                  <div className="border-b border-black h-[22px]"></div>
-                  <span className="line-label uppercase">Assinatura do Aluno ou Responsável</span>
-                </div>
-              </div>
+            );
+        }
 
-              {/* Recebi Documentação */}
-              <div className="flex gap-4">
-                <div className="w-[180px]">
-                  <div className="border-b border-black flex justify-around px-1 font-bold">
-                    <span>&nbsp;</span>/<span>&nbsp;</span>/<span>&nbsp;</span>
-                  </div>
-                  <span className="line-label uppercase">Data:</span>
-                </div>
-                <div className="flex-grow">
-                  <div className="border-b border-black h-[22px]"></div>
-                  <span className="line-label uppercase">Recebi a Documentação</span>
-                </div>
-              </div>
-
-              {/* Deferimento Final */}
-              <div className="mt-24 pt-8">
-                <div className="border-b border-black w-full h-[22px]"></div>
-                <span className="line-label uppercase">Deferimento do Diretor/Secretário</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default App;
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+        
+        // Inicializa ícones
+        setTimeout(() => lucide.createIcons(), 500);
+    </script>
+</body>
+</html>
