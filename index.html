@@ -34,10 +34,12 @@
                 box-shadow: none !important;
                 border: none !important;
                 margin: 0 !important;
-                padding: 1.2cm !important; /* Reduzi levemente a margem de impressão */
+                padding: 1.5cm !important;
                 width: 100% !important;
                 max-width: none !important;
-                height: auto;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
             }
         }
 
@@ -62,8 +64,8 @@
         }
 
         .crest-container {
-            width: 110px; /* Reduzi levemente o brasão para ganhar espaço */
-            height: 110px;
+            width: 120px;
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,18 +103,18 @@
             align-items: baseline;
             gap: 6px;
             flex-shrink: 0;
-            padding-top: 6px; 
+            padding-top: 8px; 
         }
 
         .sign-line-container {
             flex-grow: 1;
-            padding-top: 6px; 
+            padding-top: 8px; 
         }
 
         .custom-line {
             border-bottom: 1px solid black;
             padding-bottom: 0px;
-            min-height: 28px; /* Reduzi a altura mínima da linha */
+            min-height: 32px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -127,7 +129,7 @@
             gap: 0;
             font-weight: normal; 
             font-size: 14pt;
-            min-height: 28px;
+            min-height: 32px;
             border-bottom: 1px solid black; 
             padding-bottom: 0px; 
         }
@@ -163,9 +165,9 @@
         }
 
         .director-sign-img {
-            max-height: 45px;
+            max-height: 50px;
             object-fit: contain;
-            margin-bottom: -15px;
+            margin-bottom: -18px;
         }
     </style>
 </head>
@@ -365,12 +367,12 @@
                         </div>
                     </div>
 
-                    {/* Área do Documento - ESPAÇOS REDUZIDOS */}
+                    {/* Área do Documento - ESPAÇAMENTO DISTRIBUÍDO */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
-                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2cm] text-black official-doc-font box-border">
+                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border flex flex-col">
                             
-                            {/* Cabeçalho - Espaço mb-12 para mb-6 */}
-                            <div className="flex items-center justify-start gap-8 mb-6">
+                            {/* Cabeçalho */}
+                            <div className="flex items-center justify-start gap-8 mb-10">
                                 <div className="crest-container shrink-0">
                                     <img src={logo} alt="Brasão" className="crest-img" onError={(e) => { e.target.src = 'https://via.placeholder.com/120?text=BRASÃO'; }} />
                                 </div>
@@ -381,45 +383,45 @@
                                 </div>
                             </div>
 
-                            {/* Títulos - Espaço mb-10 para mb-4 */}
-                            <div className="text-center mb-4">
-                                <h1 className="text-[24pt] font-bold italic mb-4">Requerimento de Transferência</h1>
-                                <h2 className="text-[12pt] font-normal uppercase tracking-widest">Escola Municipal Walda Miranda de Paiva</h2>
+                            {/* Títulos */}
+                            <div className="text-center mb-8">
+                                <h1 className="text-[26pt] font-bold italic mb-6">Requerimento de Transferência</h1>
+                                <h2 className="text-[13pt] font-normal uppercase tracking-widest">Escola Municipal Walda Miranda de Paiva</h2>
                             </div>
 
-                            {/* Nome do Aluno - mt-14 para mt-6 e mb-10 para mb-4 */}
-                            <div className="mb-4 mt-6">
+                            {/* Nome do Aluno */}
+                            <div className="mb-8 mt-12">
                                 <div className="custom-line w-full text-[14pt] uppercase">{formData.nomeAluno}</div>
                                 <span className="line-label-14 uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Informações Escolares - mb-16 para mb-6 */}
-                            <div className="info-row mb-6 text-[14pt]">
+                            {/* Informações Escolares */}
+                            <div className="info-row mb-12 text-[14pt]">
                                 <div className="flex items-baseline">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[70px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
+                                    <div className="border-b border-black w-[80px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
                                 </div>
                                 <div className="flex items-baseline">
                                     <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black w-[50px] text-center font-bold min-h-[1.5rem]">{formData.turma}</div>
+                                    <div className="border-b border-black w-[60px] text-center font-bold min-h-[1.5rem]">{formData.turma}</div>
                                 </div>
-                                <div className="flex items-baseline flex-grow justify-center">
+                                <div className="flex items-baseline flex-grow justify-center px-4">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black min-w-[120px] text-center font-bold uppercase min-h-[1.5rem]">{formData.turno}</div>
+                                    <div className="border-b border-black min-w-[140px] text-center font-bold uppercase min-h-[1.5rem]">{formData.turno}</div>
                                 </div>
                                 <div className="flex items-baseline">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[100px] text-center font-bold min-h-[1.5rem]">{formData.anoLetivo}</div>
+                                    <div className="border-b border-black w-[110px] text-center font-bold min-h-[1.5rem]">{formData.anoLetivo}</div>
                                 </div>
                             </div>
 
-                            {/* Mensagem Central - my-20 para my-8 */}
-                            <div className="text-center font-bold text-[18pt] my-8 uppercase tracking-wide">
+                            {/* Mensagem Central - Aumentado para empurrar o resto para baixo */}
+                            <div className="text-center font-bold text-[18pt] my-20 uppercase tracking-wide">
                                 Requer sua Transferência
                             </div>
 
-                            {/* Bloco de Datas e Assinaturas - space-y-16 para space-y-8 */}
-                            <div className="space-y-8">
+                            {/* Bloco de Datas e Assinaturas - Flex grow para empurrar a diretoria para o final */}
+                            <div className="space-y-16 flex-grow">
                                 <div className="signature-block">
                                     <div className="date-side-wrapper">
                                         <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
@@ -441,13 +443,13 @@
                                         <span className="line-label-14 uppercase">Recebi a Documentação</span>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Assinatura do Diretor - mt-24 para mt-12 */}
-                                <div className="mt-12 text-center flex flex-col items-center">
-                                    <img src="./assinatura.png" alt="Assinatura" className="director-sign-img" onError={(e) => { e.target.style.display = 'none'; }} />
-                                    <div className="border-b border-black w-full h-8"></div>
-                                    <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
-                                </div>
+                            {/* Assinatura do Diretor - No rodapé da folha */}
+                            <div className="mt-auto pt-10 pb-6 text-center flex flex-col items-center">
+                                <img src="./assinatura.png" alt="Assinatura" className="director-sign-img" onError={(e) => { e.target.style.display = 'none'; }} />
+                                <div className="border-b border-black w-full h-8"></div>
+                                <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
                             </div>
                         </div>
                     </div>
