@@ -108,7 +108,7 @@
             font-weight: bold;
         }
 
-        /* Nova estrutura para data "tocando" a linha */
+        /* Estrutura para data tocando a linha única */
         .date-slots-underlined {
             display: flex;
             justify-content: center;
@@ -116,23 +116,25 @@
             gap: 0;
             font-weight: bold;
             min-height: 32px;
-            border-bottom: 1.5px solid black; /* Linha única para todo o bloco de data */
-            padding-bottom: 2px; /* Espaço mínimo para não "cortar" as letras */
+            border-bottom: 1.5px solid black; /* A linha horizontal acima de "Data" */
+            padding-bottom: 0px; 
         }
 
         .date-slot-item {
             min-width: 32px;
             text-align: center;
+            line-height: 1.8;
         }
 
         .date-slot-year {
             min-width: 48px;
             text-align: center;
+            line-height: 1.8;
         }
 
         .date-separator {
             font-size: 1.2rem;
-            line-height: 1;
+            line-height: 1.8;
             padding: 0 2px;
         }
     </style>
@@ -144,7 +146,7 @@
         const { useState, useEffect } = React;
 
         function App() {
-            // Data de hoje formatada DD/MM/AAAA
+            // Função para pegar a data de hoje formatada
             const getTodayDate = () => {
                 const now = new Date();
                 const day = String(now.getDate()).padStart(2, '0');
@@ -182,20 +184,20 @@
                 window.print();
             };
 
-            // Função para renderizar a data em slots tocando a linha única
+            // Função para renderizar a data em slots sobre a linha única
             const renderDateSlots = (dateString) => {
-                const parts = dateString.split('/');
+                const parts = dateString ? dateString.split('/') : ["", "", ""];
                 const day = parts[0] || '';
                 const month = parts[1] || '';
                 const year = parts[2] || '';
 
                 return (
                     <div className="date-slots-underlined">
-                        <div className="date-slot-item">{day || "___"}</div>
+                        <div className="date-slot-item">{day}</div>
                         <span className="date-separator">/</span>
-                        <div className="date-slot-item">{month || "___"}</div>
+                        <div className="date-slot-item">{month}</div>
                         <span className="date-separator">/</span>
-                        <div className="date-slot-year">{year || "____"}</div>
+                        <div className="date-slot-year">{year}</div>
                     </div>
                 );
             };
@@ -274,7 +276,7 @@
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho */}
+                            {/* Cabeçalho - Alinhado à Esquerda conforme solicitado */}
                             <div className="flex items-center justify-start gap-6 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
@@ -307,7 +309,7 @@
                                 <span className="line-label-below uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Informações Escolares */}
+                            {/* Informações Escolares em Linha Única */}
                             <div className="info-row mb-10 text-[11pt]">
                                 <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano:</span>
@@ -341,7 +343,7 @@
                                 </div>
                             </div>
 
-                            {/* Professor(a) */}
+                            {/* Professor(a) - Enfeite */}
                             <div className="flex items-baseline mb-16 text-[12pt]">
                                 <span className="mr-2 whitespace-nowrap">Prof. (a):</span>
                                 <div className="border-b border-black flex-grow font-bold px-2 uppercase min-h-[1.4rem] text-center">
@@ -352,9 +354,9 @@
                                 Requer sua Transferência
                             </div>
 
-                            {/* Seção de Assinaturas Harmoniosa */}
+                            {/* Seção de Assinaturas */}
                             <div className="space-y-16">
-                                {/* Primeira Assinatura (Data sobre a linha) */}
+                                {/* Primeira Assinatura - Com barras e preenchimento automático */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataHoje)}
@@ -366,7 +368,7 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura (Vazia sobre a linha) */}
+                                {/* Segunda Assinatura - Agora com as barras inclinadas sobre a linha única */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots("")}
