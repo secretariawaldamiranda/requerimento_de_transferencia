@@ -190,8 +190,8 @@
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho Institucional - Centralizado */}
-                            <div className="flex items-center justify-center gap-6 mb-12">
+                            {/* Cabeçalho Institucional - ALINHADO À ESQUERDA */}
+                            <div className="flex items-center justify-start gap-6 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
                                         src={logo} 
@@ -200,14 +200,14 @@
                                         onError={(e) => { e.target.src = 'https://via.placeholder.com/100?text=BRASÃO'; }}
                                     />
                                 </div>
-                                <div className="text-[12pt] font-bold leading-tight uppercase">
+                                <div className="text-[12pt] font-bold leading-tight uppercase text-left">
                                     <p>Estado de Goiás</p>
                                     <p>Prefeitura Municipal de Formosa</p>
                                     <p>Secretaria Municipal de Educação</p>
                                 </div>
                             </div>
 
-                            {/* Títulos - Centralizados */}
+                            {/* Títulos - Centralizados conforme o padrão de documentos */}
                             <div className="text-center mb-10">
                                 <h1 className="text-[26pt] font-bold italic mb-8">Requerimento de Transferência</h1>
                                 <h2 className="text-[13pt] font-normal uppercase tracking-widest mt-4">
@@ -243,10 +243,10 @@
                                         {formData.turma}
                                     </div>
                                 </div>
-                                {/* Espaço maior para o Turno */}
+                                {/* Espaço amplo para Turno (Matutino/Vespertino) */}
                                 <div className="flex items-baseline">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black w-[130px] text-center font-bold uppercase px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[150px] text-center font-bold uppercase px-1 min-h-[1.2rem]">
                                         {formData.turno}
                                     </div>
                                 </div>
