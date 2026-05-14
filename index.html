@@ -34,10 +34,10 @@
                 box-shadow: none !important;
                 border: none !important;
                 margin: 0 !important;
-                padding: 1.5cm !important;
+                padding: 1.2cm !important; /* Reduzi levemente a margem de impressão */
                 width: 100% !important;
                 max-width: none !important;
-                height: 100vh;
+                height: auto;
             }
         }
 
@@ -50,7 +50,7 @@
             font-weight: normal;
             text-align: center;
             display: block;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .line-label-14 {
@@ -58,12 +58,12 @@
             font-weight: normal;
             text-align: center;
             display: block;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .crest-container {
-            width: 120px;
-            height: 120px;
+            width: 110px; /* Reduzi levemente o brasão para ganhar espaço */
+            height: 110px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,18 +101,18 @@
             align-items: baseline;
             gap: 6px;
             flex-shrink: 0;
-            padding-top: 8px; 
+            padding-top: 6px; 
         }
 
         .sign-line-container {
             flex-grow: 1;
-            padding-top: 8px; 
+            padding-top: 6px; 
         }
 
         .custom-line {
             border-bottom: 1px solid black;
             padding-bottom: 0px;
-            min-height: 32px;
+            min-height: 28px; /* Reduzi a altura mínima da linha */
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -127,7 +127,7 @@
             gap: 0;
             font-weight: normal; 
             font-size: 14pt;
-            min-height: 32px;
+            min-height: 28px;
             border-bottom: 1px solid black; 
             padding-bottom: 0px; 
         }
@@ -365,35 +365,36 @@
                         </div>
                     </div>
 
-                    {/* Área do Documento */}
+                    {/* Área do Documento - ESPAÇOS REDUZIDOS */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho */}
-                            <div className="flex items-center justify-start gap-8 mb-12">
+                            {/* Cabeçalho - Espaço mb-12 para mb-6 */}
+                            <div className="flex items-center justify-start gap-8 mb-6">
                                 <div className="crest-container shrink-0">
                                     <img src={logo} alt="Brasão" className="crest-img" onError={(e) => { e.target.src = 'https://via.placeholder.com/120?text=BRASÃO'; }} />
                                 </div>
-                                <div className="text-[16pt] font-bold leading-tight uppercase text-left">
+                                <div className="text-[14pt] font-bold leading-tight uppercase text-left">
                                     <p>Estado de Goiás</p>
                                     <p>Prefeitura Municipal de Formosa</p>
                                     <p>Secretaria Municipal de Educação</p>
                                 </div>
                             </div>
 
-                            <div className="text-center mb-10">
-                                <h1 className="text-[26pt] font-bold italic mb-8">Requerimento de Transferência</h1>
-                                <h2 className="text-[13pt] font-normal uppercase tracking-widest mt-4">Escola Municipal Walda Miranda de Paiva</h2>
+                            {/* Títulos - Espaço mb-10 para mb-4 */}
+                            <div className="text-center mb-4">
+                                <h1 className="text-[24pt] font-bold italic mb-4">Requerimento de Transferência</h1>
+                                <h2 className="text-[12pt] font-normal uppercase tracking-widest">Escola Municipal Walda Miranda de Paiva</h2>
                             </div>
 
-                            {/* Nome do Aluno */}
-                            <div className="mb-10 mt-14">
+                            {/* Nome do Aluno - mt-14 para mt-6 e mb-10 para mb-4 */}
+                            <div className="mb-4 mt-6">
                                 <div className="custom-line w-full text-[14pt] uppercase">{formData.nomeAluno}</div>
                                 <span className="line-label-14 uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Informações Escolares em 14pt */}
-                            <div className="info-row mb-16 text-[14pt]">
+                            {/* Informações Escolares - mb-16 para mb-6 */}
+                            <div className="info-row mb-6 text-[14pt]">
                                 <div className="flex items-baseline">
                                     <span className="mr-1">Ano:</span>
                                     <div className="border-b border-black w-[70px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
@@ -412,13 +413,13 @@
                                 </div>
                             </div>
 
-                            {/* Mensagem Central */}
-                            <div className="text-center font-bold text-[18pt] mb-20 uppercase tracking-wide">
+                            {/* Mensagem Central - my-20 para my-8 */}
+                            <div className="text-center font-bold text-[18pt] my-8 uppercase tracking-wide">
                                 Requer sua Transferência
                             </div>
 
-                            {/* Bloco de Datas e Assinaturas */}
-                            <div className="space-y-16">
+                            {/* Bloco de Datas e Assinaturas - space-y-16 para space-y-8 */}
+                            <div className="space-y-8">
                                 <div className="signature-block">
                                     <div className="date-side-wrapper">
                                         <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
@@ -441,8 +442,8 @@
                                     </div>
                                 </div>
 
-                                {/* Assinatura do Diretor */}
-                                <div className="mt-24 text-center flex flex-col items-center">
+                                {/* Assinatura do Diretor - mt-24 para mt-12 */}
+                                <div className="mt-12 text-center flex flex-col items-center">
                                     <img src="./assinatura.png" alt="Assinatura" className="director-sign-img" onError={(e) => { e.target.style.display = 'none'; }} />
                                     <div className="border-b border-black w-full h-8"></div>
                                     <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
