@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Requerimento - Escola Walda Miranda de Paiva</title>
-    <!-- Tailwind CSS para o design -->
+    <!-- Tailwind CSS para o painel de controle -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React e Babel para funcionar direto no navegador -->
+    <!-- React e Babel -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -15,159 +15,74 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
+        :root {
+            /* DEFINIÇÕES DE MEDIDAS - VOCÊ PODE ME PASSAR ESSES VALORES */
+            --doc-margin-top: 1.5cm;
+            --doc-margin-bottom: 1.5cm;
+            --doc-margin-left: 2cm;
+            --doc-margin-right: 2cm;
+            --font-size-labels: 14pt;
+            --font-size-titles: 26pt;
+            --font-size-subtitles: 13pt;
+            --line-height-fields: 32px;
         }
 
+        body { font-family: 'Inter', sans-serif; }
+
         @media print {
-            @page { 
-                size: A4; 
-                margin: 0; 
-            }
-            body { 
-                background: white !important; 
-            }
-            .no-print { 
-                display: none !important; 
-            }
+            @page { size: A4; margin: 0; }
+            body { background: white !important; }
+            .no-print { display: none !important; }
             .print-area {
                 box-shadow: none !important;
                 border: none !important;
                 margin: 0 !important;
-                padding: 1.5cm !important;
+                padding: var(--doc-margin-top) var(--doc-margin-right) var(--doc-margin-bottom) var(--doc-margin-left) !important;
                 width: 100% !important;
                 max-width: none !important;
                 height: 100vh;
                 display: flex;
                 flex-direction: column;
+                box-sizing: border-box;
             }
         }
 
-        .official-doc-font {
-            font-family: Arial, sans-serif;
-        }
+        .official-doc-font { font-family: Arial, sans-serif; }
 
-        .line-label-normal {
-            font-size: 10pt;
-            font-weight: normal;
-            text-align: center;
-            display: block;
-            margin-top: 2px;
-        }
-
-        .line-label-14 {
-            font-size: 14pt;
-            font-weight: normal;
-            text-align: center;
-            display: block;
-            margin-top: 2px;
-        }
-
-        .crest-container {
-            width: 120px;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .crest-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .file-input-hidden {
-            display: none;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            width: 100%;
-            gap: 12px;
-            white-space: nowrap;
-        }
+        /* Estilos de fonte configurados */
+        .label-14 { font-size: var(--font-size-labels); font-weight: normal; text-transform: uppercase; }
+        .data-text-14 { font-size: var(--font-size-labels); font-weight: bold; text-transform: uppercase; }
         
-        .signature-block {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            width: 100%;
-        }
+        .line-under { border-bottom: 1px solid black; min-height: var(--line-height-fields); display: flex; align-items: flex-end; }
+        
+        .crest-container { width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+        .crest-img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        .date-side-wrapper {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-            flex-shrink: 0;
-            padding-top: 8px; 
-        }
-
-        .sign-line-container {
-            flex-grow: 1;
-            padding-top: 8px; 
-        }
-
-        .custom-line {
-            border-bottom: 1px solid black;
-            padding-bottom: 0px;
-            min-height: 32px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            font-weight: bold;
-            line-height: 1;
-        }
+        .signature-block { display: flex; align-items: flex-start; gap: 15px; width: 100%; }
+        .date-side-wrapper { display: flex; align-items: baseline; gap: 6px; flex-shrink: 0; padding-top: 10px; }
+        .sign-line-container { flex-grow: 1; padding-top: 10px; }
 
         .date-slots-underlined {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 0;
-            font-weight: normal; 
-            font-size: 14pt;
-            min-height: 32px;
-            border-bottom: 1px solid black; 
-            padding-bottom: 0px; 
+            font-size: var(--font-size-labels);
+            min-height: var(--line-height-fields);
+            border-bottom: 1px solid black;
+            min-width: 160px;
         }
 
-        .date-slot-item {
-            min-width: 32px;
-            text-align: center;
-            line-height: 1; 
-        }
-
-        .date-slot-year {
-            min-width: 50px;
-            text-align: center;
-            line-height: 1;
-        }
-
-        .date-separator {
-            font-size: 1.4rem;
-            line-height: 1; 
-            padding: 0 2px;
-        }
+        .director-sign-img { max-height: 50px; object-fit: contain; margin-bottom: -18px; }
 
         .suggestions-list {
             max-height: 250px;
             overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            background: white;
             position: absolute;
             width: 100%;
             z-index: 50;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .director-sign-img {
-            max-height: 50px;
-            object-fit: contain;
-            margin-bottom: -18px;
+            background: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -178,12 +93,8 @@
         const { useState, useEffect } = React;
 
         function App() {
-            const getTodayISODate = () => {
-                const now = new Date();
-                return now.toISOString().split('T')[0];
-            };
+            const getTodayISODate = () => new Date().toISOString().split('T')[0];
 
-            const [logo, setLogo] = useState('./brasao.png');
             const [csvData, setCsvData] = useState([]);
             const [searchTerm, setSearchTerm] = useState('');
             const [showSuggestions, setShowSuggestions] = useState(false);
@@ -208,12 +119,8 @@
                             const text = await response.text();
                             parseCsv(text);
                             setLoadStatus('success');
-                        } else {
-                            setLoadStatus('error');
-                        }
-                    } catch (err) {
-                        setLoadStatus('error');
-                    }
+                        } else { setLoadStatus('error'); }
+                    } catch (err) { setLoadStatus('error'); }
                 };
                 autoFetchCsv();
             }, []);
@@ -246,18 +153,6 @@
                 }
             };
 
-            const handleCsvUploadManual = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        parseCsv(event.target.result);
-                        setLoadStatus('success');
-                    };
-                    reader.readAsText(file);
-                }
-            };
-
             const selectStudent = (student) => {
                 setFormData({
                     ...formData,
@@ -270,27 +165,20 @@
                 setShowSuggestions(false);
             };
 
-            const handlePrint = () => { window.print(); };
-
-            const formatDateForDoc = (isoDate) => {
-                if (!isoDate) return "";
-                const [year, month, day] = isoDate.split('-');
-                return `${day}/${month}/${year}`;
-            };
-
             const renderDateSlots = (isoDate) => {
-                const dateString = formatDateForDoc(isoDate);
-                const parts = dateString ? dateString.split('/') : ["", "", ""];
-                const day = parts[0] || '';
-                const month = parts[1] || '';
-                const year = parts[2] || '';
+                if (!isoDate) return (
+                    <div className="date-slots-underlined">
+                        <div className="w-8 text-center">&nbsp;</div>/
+                        <div className="w-8 text-center">&nbsp;</div>/
+                        <div className="w-12 text-center">&nbsp;</div>
+                    </div>
+                );
+                const [y, m, d] = isoDate.split('-');
                 return (
                     <div className="date-slots-underlined">
-                        <div className="date-slot-item">{day}</div>
-                        <span className="date-separator">/</span>
-                        <div className="date-slot-item">{month}</div>
-                        <span className="date-separator">/</span>
-                        <div className="date-slot-year">{year}</div>
+                        <div className="w-8 text-center">{d}</div>/
+                        <div className="w-8 text-center">{m}</div>/
+                        <div className="w-12 text-center">{y}</div>
                     </div>
                 );
             };
@@ -301,155 +189,119 @@
 
             return (
                 <div className="flex flex-col lg:flex-row min-h-screen">
-                    {/* Painel lateral de preenchimento */}
-                    <div className="no-print w-full lg:w-[400px] bg-white border-r border-slate-300 p-6 shadow-xl z-10 overflow-y-auto">
-                        <div className="flex items-center gap-3 mb-8 text-blue-900 border-b pb-4">
-                            <i data-lucide="database"></i>
-                            <h1 className="text-xl font-bold uppercase tracking-tight">Automação</h1>
+                    {/* Painel de Controle */}
+                    <div className="no-print w-full lg:w-[400px] bg-white border-r p-6 shadow-xl z-10 overflow-y-auto">
+                        <div className="flex items-center gap-3 mb-6 text-blue-900 border-b pb-4">
+                            <i data-lucide="settings"></i>
+                            <h1 className="text-xl font-bold uppercase">Controle</h1>
                         </div>
+                        
                         <div className="space-y-4">
-                            <div className="mb-4">
-                                {loadStatus === 'success' ? (
-                                    <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm font-semibold">
-                                        <i data-lucide="check-circle" size="18"></i>
-                                        {csvData.length} alunos carregados.
-                                    </div>
-                                ) : (
-                                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm text-center">
-                                        <label className="text-blue-600 underline cursor-pointer">
-                                            Carregar CUBO.CSV manualmente
-                                            <input type="file" className="hidden" accept=".csv" onChange={handleCsvUploadManual} />
-                                        </label>
-                                    </div>
-                                )}
-                            </div>
                             <div className="relative">
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Buscar Aluno</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase">Buscar Aluno</label>
                                 <input 
                                     name="nomeAluno" 
-                                    className="w-full p-2 border-2 border-slate-200 rounded focus:border-blue-500 outline-none uppercase font-semibold text-sm"
+                                    className="w-full p-2 border-2 rounded uppercase font-semibold text-sm"
                                     value={formData.nomeAluno}
                                     onChange={handleChange}
                                     autoComplete="off"
-                                    placeholder="Digite o nome..."
                                 />
                                 {showSuggestions && searchTerm && csvData.length > 0 && (
                                     <div className="suggestions-list">
                                         {filteredStudents.map((s, idx) => (
-                                            <div key={idx} className="p-3 hover:bg-blue-600 hover:text-white cursor-pointer border-b last:border-0 text-sm font-bold uppercase" onClick={() => selectStudent(s)}>
-                                                {s.nome} <span className="text-[10px] opacity-70">({s.ano} {s.turma})</span>
+                                            <div key={idx} className="p-3 hover:bg-blue-600 hover:text-white cursor-pointer border-b text-sm font-bold uppercase" onClick={() => selectStudent(s)}>
+                                                {s.nome}
                                             </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
+                            
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
-                                <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.ano} onChange={handleChange} /></div>
-                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
-                                <input name="turma" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.turma} onChange={handleChange} /></div>
+                                <div><label className="text-xs font-bold text-gray-500">ANO</label><input name="ano" className="w-full p-2 border-2 rounded" value={formData.ano} onChange={handleChange} /></div>
+                                <div><label className="text-xs font-bold text-gray-500">TURMA</label><input name="turma" className="w-full p-2 border-2 rounded" value={formData.turma} onChange={handleChange} /></div>
                             </div>
+                            
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turno</label>
-                                <input name="turno" className="w-full p-2 border-2 border-slate-200 rounded text-sm uppercase" value={formData.turno} onChange={handleChange} /></div>
-                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano Letivo</label>
-                                <input name="anoLetivo" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.anoLetivo} onChange={handleChange} /></div>
+                                <div><label className="text-xs font-bold text-gray-500">TURNO</label><input name="turno" className="w-full p-2 border-2 rounded uppercase" value={formData.turno} onChange={handleChange} /></div>
+                                <div><label className="text-xs font-bold text-gray-500">ANO LETIVO</label><input name="anoLetivo" className="w-full p-2 border-2 rounded" value={formData.anoLetivo} onChange={handleChange} /></div>
                             </div>
-                            <div className="pt-4 border-t border-slate-100">
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data Requerimento</label>
-                                <input type="date" name="dataRequerimento" className="w-full p-2 border-2 border-slate-200 rounded text-sm cursor-pointer" value={formData.dataRequerimento} onChange={handleChange} />
+
+                            <div className="grid grid-cols-1 gap-4 pt-4 border-t">
+                                <div><label className="text-xs font-bold text-gray-500">DATA REQUERIMENTO</label><input type="date" name="dataRequerimento" className="w-full p-2 border-2 rounded" value={formData.dataRequerimento} onChange={handleChange} /></div>
+                                <div><label className="text-xs font-bold text-gray-500">DATA RECEBIDO</label><input type="date" name="dataRecebido" className="w-full p-2 border-2 rounded" value={formData.dataRecebido} onChange={handleChange} /></div>
                             </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data Recebido</label>
-                                <input type="date" name="dataRecebido" className="w-full p-2 border-2 border-slate-200 rounded text-sm cursor-pointer" value={formData.dataRecebido} onChange={handleChange} />
-                            </div>
-                            <button onClick={handlePrint} className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg mt-4"><i data-lucide="printer"></i> IMPRIMIR</button>
+
+                            <button onClick={() => window.print()} className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg mt-4">
+                                <i data-lucide="printer"></i> IMPRIMIR
+                            </button>
                         </div>
                     </div>
 
-                    {/* Área do Documento - ESPAÇAMENTO DISTRIBUÍDO */}
-                    <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
-                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border flex flex-col">
+                    {/* Documento */}
+                    <div className="flex-1 flex justify-center p-4 lg:p-10 bg-slate-200 print:bg-white print:p-0">
+                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl text-black official-doc-font box-border flex flex-col">
                             
-                            {/* Cabeçalho */}
-                            <div className="flex items-center justify-start gap-8 mb-10">
+                            <div className="flex items-center justify-start gap-8 mb-8">
                                 <div className="crest-container shrink-0">
-                                    <img src={logo} alt="Brasão" className="crest-img" onError={(e) => { e.target.src = 'https://via.placeholder.com/120?text=BRASÃO'; }} />
+                                    <img src="./brasao.png" alt="Brasão" className="crest-img" onError={(e) => { e.target.src = 'https://via.placeholder.com/120?text=BRASÃO'; }} />
                                 </div>
-                                <div className="text-[14pt] font-bold leading-tight uppercase text-left">
+                                <div className="text-[14pt] font-bold leading-tight uppercase">
                                     <p>Estado de Goiás</p>
                                     <p>Prefeitura Municipal de Formosa</p>
                                     <p>Secretaria Municipal de Educação</p>
                                 </div>
                             </div>
 
-                            {/* Títulos */}
-                            <div className="text-center mb-8">
-                                <h1 className="text-[26pt] font-bold italic mb-6">Requerimento de Transferência</h1>
+                            <div className="text-center mb-6">
+                                <h1 className="text-[26pt] font-bold italic mb-4">Requerimento de Transferência</h1>
                                 <h2 className="text-[13pt] font-normal uppercase tracking-widest">Escola Municipal Walda Miranda de Paiva</h2>
                             </div>
 
-                            {/* Nome do Aluno */}
-                            <div className="mb-8 mt-12">
-                                <div className="custom-line w-full text-[14pt] uppercase">{formData.nomeAluno}</div>
-                                <span className="line-label-14 uppercase">Nome do Aluno</span>
+                            <div className="mb-6 mt-10">
+                                <div className="line-under w-full data-text-14 justify-center">{formData.nomeAluno}</div>
+                                <span className="label-14 text-center block mt-1">Nome do Aluno</span>
                             </div>
 
-                            {/* Informações Escolares */}
-                            <div className="info-row mb-12 text-[14pt]">
-                                <div className="flex items-baseline">
-                                    <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[80px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
-                                </div>
-                                <div className="flex items-baseline">
-                                    <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black w-[60px] text-center font-bold min-h-[1.5rem]">{formData.turma}</div>
-                                </div>
-                                <div className="flex items-baseline flex-grow justify-center px-4">
-                                    <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black min-w-[140px] text-center font-bold uppercase min-h-[1.5rem]">{formData.turno}</div>
-                                </div>
-                                <div className="flex items-baseline">
-                                    <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[110px] text-center font-bold min-h-[1.5rem]">{formData.anoLetivo}</div>
-                                </div>
+                            <div className="flex justify-between items-baseline mb-10 label-14">
+                                <div className="flex items-baseline">Ano: <div className="border-b border-black w-24 text-center font-bold px-1 ml-1">{formData.ano}</div></div>
+                                <div className="flex items-baseline">Turma: <div className="border-b border-black w-20 text-center font-bold px-1 ml-1">{formData.turma}</div></div>
+                                <div className="flex items-baseline">Turno: <div className="border-b border-black w-32 text-center font-bold px-1 ml-1">{formData.turno}</div></div>
+                                <div className="flex items-baseline">Ano Letivo: <div className="border-b border-black w-28 text-center font-bold px-1 ml-1">{formData.anoLetivo}</div></div>
                             </div>
 
-                            {/* Mensagem Central - Aumentado para empurrar o resto para baixo */}
-                            <div className="text-center font-bold text-[18pt] my-20 uppercase tracking-wide">
+                            <div className="text-center font-bold text-[18pt] my-16 uppercase tracking-wide">
                                 Requer sua Transferência
                             </div>
 
-                            {/* Bloco de Datas e Assinaturas - Flex grow para empurrar a diretoria para o final */}
-                            <div className="space-y-16 flex-grow">
+                            <div className="space-y-12 flex-grow">
                                 <div className="signature-block">
                                     <div className="date-side-wrapper">
-                                        <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
+                                        <span className="label-14 whitespace-nowrap">Data:</span>
                                         {renderDateSlots(formData.dataRequerimento)}
                                     </div>
                                     <div className="sign-line-container">
-                                        <div className="custom-line"></div>
-                                        <span className="line-label-14 uppercase">Assinatura do Aluno ou Responsável</span>
+                                        <div className="line-under"></div>
+                                        <span className="label-14 text-center block mt-1">Assinatura do Aluno ou Responsável</span>
                                     </div>
                                 </div>
 
                                 <div className="signature-block">
                                     <div className="date-side-wrapper">
-                                        <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
+                                        <span className="label-14 whitespace-nowrap">Data:</span>
                                         {renderDateSlots(formData.dataRecebido)}
                                     </div>
                                     <div className="sign-line-container">
-                                        <div className="custom-line"></div>
-                                        <span className="line-label-14 uppercase">Recebi a Documentação</span>
+                                        <div className="line-under"></div>
+                                        <span className="label-14 text-center block mt-1">Recebi a Documentação</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Assinatura do Diretor - No rodapé da folha */}
-                            <div className="mt-auto pt-10 pb-6 text-center flex flex-col items-center">
+                            <div className="mt-auto pt-10 pb-10 flex flex-col items-center">
                                 <img src="./assinatura.png" alt="Assinatura" className="director-sign-img" onError={(e) => { e.target.style.display = 'none'; }} />
                                 <div className="border-b border-black w-full h-8"></div>
-                                <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
+                                <span className="label-14 text-center block mt-1" style={{fontSize: '12pt'}}>Deferimento do Diretor / Secretário</span>
                             </div>
                         </div>
                     </div>
