@@ -107,6 +107,16 @@
             justify-content: center;
             font-weight: bold;
         }
+
+        /* Versão sem linha para a data */
+        .no-line {
+            padding-bottom: 2px;
+            min-height: 28px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -311,7 +321,8 @@
                                 {/* Primeira Assinatura (Preenchida com hoje) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
-                                        <div className="custom-line">
+                                        {/* Removida a classe custom-line para tirar a borda preta */}
+                                        <div className="no-line">
                                             {formData.dataHoje}
                                         </div>
                                         <span className="line-label-below uppercase">Data</span>
@@ -325,7 +336,8 @@
                                 {/* Segunda Assinatura (Em branco) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
-                                        <div className="custom-line">
+                                        {/* Removida a classe custom-line para tirar a borda preta */}
+                                        <div className="no-line">
                                             ___/___/___
                                         </div>
                                         <span className="line-label-below uppercase">Data</span>
