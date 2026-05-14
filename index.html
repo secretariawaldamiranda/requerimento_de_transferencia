@@ -80,7 +80,7 @@
         const { useState, useEffect } = React;
 
         function App() {
-            // Brasão fixo conforme solicitado
+            // Brasão fixo conforme solicitado (brasao.png na mesma pasta)
             const [logo, setLogo] = useState('./brasao.png');
             
             const [formData, setFormData] = useState({
@@ -176,7 +176,7 @@
                         </div>
                     </div>
 
-                    {/* Área do Documento - Fiel à imagem image_92fdb6.png */}
+                    {/* Área do Documento - Layout Horizontal Rigoroso */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font">
                             
@@ -213,36 +213,35 @@
                                 <span className="line-label-below uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Seção de Dados (Campo Série apenas decorativo) */}
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-8 mb-10 text-[12pt]">
-                                <div className="flex items-baseline min-w-[120px]">
+                            {/* Seção de Dados em LINHA ÚNICA (Sem wrap) */}
+                            <div className="flex items-center gap-x-4 mb-10 text-[12pt] whitespace-nowrap">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black flex-1 min-w-[60px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[80px] text-center font-bold px-1">
                                         {formData.ano}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline min-w-[120px]">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Série:</span>
-                                    <div className="border-b border-black flex-1 min-w-[60px] text-center font-bold px-1">
-                                        {/* Apenas decorativo, sem preenchimento lateral */}
+                                    <div className="border-b border-black w-[80px] text-center font-bold px-1">
                                         {" "}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline min-w-[80px]">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black flex-1 min-w-[40px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[60px] text-center font-bold px-1">
                                         {formData.turma}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline min-w-[160px]">
+                                <div className="flex items-baseline flex-grow">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black flex-1 min-w-[80px] text-center font-bold px-1 uppercase">
+                                    <div className="border-b border-black flex-grow min-w-[100px] text-center font-bold px-1 uppercase">
                                         {formData.turno}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline min-w-[140px]">
+                                <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black flex-1 min-w-[60px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[100px] text-center font-bold px-1">
                                         {formData.anoLetivo}
                                     </div>
                                 </div>
@@ -250,7 +249,7 @@
 
                             {/* Professor(a) */}
                             <div className="flex items-baseline mb-16 text-[12pt]">
-                                <span className="mr-2">Prof. (a):</span>
+                                <span className="mr-2 whitespace-nowrap">Prof. (a):</span>
                                 <div className="border-b border-black flex-grow font-bold px-2 uppercase">
                                     {formData.professor}
                                 </div>
