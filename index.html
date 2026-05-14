@@ -124,18 +124,18 @@
         .date-slot-item {
             min-width: 32px;
             text-align: center;
-            line-height: 1; /* Alinha o texto na base */
+            line-height: 1; 
         }
 
         .date-slot-year {
             min-width: 48px;
             text-align: center;
-            line-height: 1; /* Alinha o texto na base */
+            line-height: 1;
         }
 
         .date-separator {
             font-size: 1.2rem;
-            line-height: 1; /* Garante que a barra toque a linha */
+            line-height: 1; 
             padding: 0 2px;
         }
     </style>
@@ -194,11 +194,11 @@
 
                 return (
                     <div className="date-slots-underlined">
-                        <div className="date-slot-item">{day || "___"}</div>
+                        <div className="date-slot-item">{day}</div>
                         <span className="date-separator">/</span>
-                        <div className="date-slot-item">{month || "___"}</div>
+                        <div className="date-slot-item">{month}</div>
                         <span className="date-separator">/</span>
-                        <div className="date-slot-year">{year || "____"}</div>
+                        <div className="date-slot-year">{year}</div>
                     </div>
                 );
             };
@@ -369,7 +369,7 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura - Data em branco tocando a linha */}
+                                {/* Segunda Assinatura - Data em branco com as barras tocando a linha única */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots("")}
