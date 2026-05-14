@@ -161,6 +161,12 @@
             z-index: 50;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
+
+        .director-sign-img {
+            max-height: 45px;
+            object-fit: contain;
+            margin-bottom: -15px; /* Puxa a assinatura para cima da linha */
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -184,7 +190,7 @@
             const [formData, setFormData] = useState({
                 nomeAluno: '',
                 ano: '',
-                serie: '', // Campo Série adicionado ao estado
+                serie: '',
                 turma: '',
                 turno: '',
                 anoLetivo: new Date().getFullYear().toString(),
@@ -257,7 +263,7 @@
                     ...formData,
                     nomeAluno: student.nome,
                     ano: student.ano,
-                    serie: '\u00A0', // Adiciona o caractere invisível (Non-breaking space)
+                    serie: '\u00A0', 
                     turma: student.turma,
                     turno: student.turno
                 });
@@ -462,7 +468,14 @@
                                     <div className="sign-line-container"><div className="custom-line"></div><span className="line-label-below uppercase">Recebi a Documentação</span></div>
                                 </div>
 
-                                <div className="mt-24">
+                                <div className="mt-24 text-center flex flex-col items-center">
+                                    {/* Imagem da Assinatura (Aparece se assinatura.png existir) */}
+                                    <img 
+                                        src="./assinatura.png" 
+                                        alt="Assinatura Diretor" 
+                                        className="director-sign-img"
+                                        onError={(e) => { e.target.style.display = 'none'; }} 
+                                    />
                                     <div className="border-b border-black w-full h-8"></div>
                                     <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
                                 </div>
