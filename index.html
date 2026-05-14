@@ -37,6 +37,7 @@
                 padding: 1.5cm !important;
                 width: 100% !important;
                 max-width: none !important;
+                height: 100vh;
             }
         }
 
@@ -144,13 +145,26 @@
             cursor: pointer;
             filter: invert(0.5);
         }
+
+        /* Estilo para lista de sugestões do CSV */
+        .suggestions-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            background: white;
+            position: absolute;
+            width: 100%;
+            z-index: 50;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
 
         function App() {
             const getTodayISODate = () => {
@@ -159,6 +173,11 @@
             };
 
             const [logo, setLogo] = useState('./brasao.png');
+            const [csvData, setCsvData] = useState([]);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [showSuggestions, setShowSuggestions] = useState(false);
+            const [loadStatus, setLoadStatus] = useState('idle'); // idle, loading, success, error
+            
             const [formData, setFormData] = useState({
                 nomeAluno: '',
                 ano: '',
@@ -169,19 +188,80 @@
                 dataRecebido: '',
             });
 
-            const handleChange = (e) => {
-                setFormData({ ...formData, [e.target.name]: e.target.value });
+            // Carregamento automático do CSV ao iniciar
+            useEffect(() => {
+                const autoFetchCsv = async () => {
+                    setLoadStatus('loading');
+                    try {
+                        const response = await fetch('./CUBO.CSV');
+                        if (response.ok) {
+                            const text = await response.text();
+                            parseCsv(text);
+                            setLoadStatus('success');
+                        } else {
+                            setLoadStatus('error');
+                        }
+                    } catch (err) {
+                        console.log("Erro ao carregar CSV automaticamente. Aguardando upload manual.");
+                        setLoadStatus('error');
+                    }
+                };
+                autoFetchCsv();
+            }, []);
+
+            const parseCsv = (text) => {
+                const lines = text.split(/\r?\n/);
+                const result = [];
+                // Identifica se a primeira linha é cabeçalho
+                const startIdx = lines[0].toLowerCase().includes('aluno') ? 1 : 0;
+
+                for (let i = startIdx; i < lines.length; i++) {
+                    if (lines[i].trim() === "") continue;
+                    // Usa ponto e vírgula como separador conforme seu arquivo
+                    const columns = lines[i].split(';');
+                    if (columns.length >= 4) {
+                        result.push({
+                            nome: columns[0].trim().toUpperCase(),
+                            ano: columns[1].trim(),
+                            turma: columns[2].trim(),
+                            turno: columns[3].trim()
+                        });
+                    }
+                }
+                setCsvData(result);
             };
 
-            const handleLogoChange = (e) => {
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setFormData({ ...formData, [name]: value });
+                if (name === 'nomeAluno') {
+                    setSearchTerm(value);
+                    setShowSuggestions(true);
+                }
+            };
+
+            const handleCsvUploadManual = (e) => {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onloadend = () => {
-                        setLogo(reader.result);
+                    reader.onload = (event) => {
+                        parseCsv(event.target.result);
+                        setLoadStatus('success');
                     };
-                    reader.readAsDataURL(file);
+                    reader.readAsText(file);
                 }
+            };
+
+            const selectStudent = (student) => {
+                setFormData({
+                    ...formData,
+                    nomeAluno: student.nome,
+                    ano: student.ano,
+                    turma: student.turma,
+                    turno: student.turno
+                });
+                setSearchTerm(student.nome);
+                setShowSuggestions(false);
             };
 
             const handlePrint = () => {
@@ -212,40 +292,92 @@
                 );
             };
 
+            const filteredStudents = csvData.filter(s => 
+                s.nome.toLowerCase().includes(searchTerm.toLowerCase())
+            ).slice(0, 15);
+
             return (
                 <div className="flex flex-col lg:flex-row min-h-screen">
                     {/* Painel lateral de preenchimento */}
                     <div className="no-print w-full lg:w-[400px] bg-white border-r border-slate-300 p-6 shadow-xl z-10 overflow-y-auto">
                         <div className="flex items-center gap-3 mb-8 text-blue-900 border-b pb-4">
-                            <i data-lucide="calendar"></i>
-                            <h1 className="text-xl font-bold uppercase tracking-tight">Preenchimento</h1>
+                            <i data-lucide="database"></i>
+                            <h1 className="text-xl font-bold uppercase tracking-tight">Automação</h1>
                         </div>
 
                         <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nome Completo do Aluno</label>
+                            {/* Status do CSV Automático */}
+                            <div className="mb-4">
+                                {loadStatus === 'success' ? (
+                                    <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm font-semibold">
+                                        <i data-lucide="check-circle" size="18"></i>
+                                        {csvData.length} alunos carregados do arquivo local.
+                                    </div>
+                                ) : loadStatus === 'loading' ? (
+                                    <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm animate-pulse">
+                                        <i data-lucide="loader" size="18" className="animate-spin"></i>
+                                        Procurando CUBO.CSV na pasta...
+                                    </div>
+                                ) : (
+                                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
+                                        <p className="font-bold mb-1">CUBO.CSV não encontrado automaticamente.</p>
+                                        <label className="text-blue-600 underline cursor-pointer">
+                                            Clique para selecionar manualmente
+                                            <input type="file" className="hidden" accept=".csv" onChange={handleCsvUploadManual} />
+                                        </label>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="relative">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Buscar Nome do Aluno</label>
                                 <input 
                                     name="nomeAluno" 
                                     className="w-full p-2 border-2 border-slate-200 rounded focus:border-blue-500 outline-none uppercase font-semibold text-sm"
+                                    value={formData.nomeAluno}
                                     onChange={handleChange}
+                                    autoComplete="off"
+                                    placeholder="Comece a digitar..."
                                 />
+                                {showSuggestions && searchTerm && csvData.length > 0 && (
+                                    <div className="suggestions-list shadow-2xl border-2 border-blue-100">
+                                        {filteredStudents.length > 0 ? (
+                                            filteredStudents.map((s, idx) => (
+                                                <div 
+                                                    key={idx} 
+                                                    className="p-3 hover:bg-blue-600 hover:text-white cursor-pointer border-b last:border-0 text-sm font-bold uppercase transition-colors"
+                                                    onClick={() => selectStudent(s)}
+                                                >
+                                                    <div className="flex justify-between items-center">
+                                                        <span>{s.nome}</span>
+                                                        <span className="text-[10px] opacity-70 px-2 py-1 bg-black/10 rounded">
+                                                            {s.ano} {s.turma}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="p-4 text-xs text-slate-500 italic text-center">Nenhum aluno encontrado na lista</div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
-                                    <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} placeholder="Ex: 2º Ano" />
+                                    <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.ano} onChange={handleChange} />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
-                                    <input name="turma" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} placeholder="Ex: B" />
+                                    <input name="turma" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.turma} onChange={handleChange} />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turno</label>
-                                    <input name="turno" className="w-full p-2 border-2 border-slate-200 rounded text-sm" onChange={handleChange} placeholder="Ex: Matutino" />
+                                    <input name="turno" className="w-full p-2 border-2 border-slate-200 rounded text-sm uppercase" value={formData.turno} onChange={handleChange} />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano Letivo</label>
@@ -282,18 +414,10 @@
                                 <i data-lucide="printer"></i>
                                 IMPRIMIR REQUERIMENTO
                             </button>
-
-                            <div className="pt-6 border-t mt-6">
-                                <label className="flex items-center gap-2 text-xs text-blue-600 cursor-pointer hover:underline">
-                                    <i data-lucide="image" size="14"></i>
-                                    Alterar brasão temporariamente
-                                    <input type="file" accept="image/*" className="file-input-hidden" onChange={handleLogoChange} />
-                                </label>
-                            </div>
                         </div>
                     </div>
 
-                    {/* Área do Documento - Versão com Espaçamentos Originais */}
+                    {/* Área do Documento */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
@@ -371,14 +495,12 @@
                                 </div>
                             </div>
 
-                            {/* Mensagem Central - Ajustada de my-20 para mt-16 mb-8 */}
-                            <div className="text-center font-bold text-[18pt] mt-16 mb-8 uppercase tracking-wide">
+                            <div className="text-center font-bold text-[18pt] my-20 uppercase tracking-wide">
                                 Requer sua Transferência
                             </div>
 
-                            {/* Seção de Assinaturas - Ajustada de space-y-16 para space-y-12 */}
-                            <div className="space-y-12">
-                                {/* Primeira Assinatura */}
+                            {/* Seção de Assinaturas */}
+                            <div className="space-y-16">
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataRequerimento)}
@@ -390,7 +512,6 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataRecebido)}
@@ -402,7 +523,6 @@
                                     </div>
                                 </div>
 
-                                {/* Deferimento Final */}
                                 <div className="mt-24">
                                     <div className="border-b-2 border-black w-full h-8"></div>
                                     <span className="line-label-below uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
