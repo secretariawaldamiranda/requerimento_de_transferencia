@@ -422,7 +422,7 @@
 
                             <div className="mb-10 mt-14">
                                 <div className="custom-line w-full text-[14pt] uppercase">{formData.nomeAluno}</div>
-                                <span className="line-label-below uppercase">Nome do Aluno</span>
+                                <span className="line-label-normal uppercase">Nome do Aluno</span>
                             </div>
 
                             <div className="info-row mb-10 text-[11pt]">
@@ -460,16 +460,22 @@
                             <div className="space-y-16">
                                 <div className="signature-block">
                                     <div className="date-input-container">{renderDateSlots(formData.dataRequerimento)}<span className="line-label-below uppercase">Data</span></div>
-                                    <div className="sign-line-container"><div className="custom-line"></div><span className="line-label-below uppercase">Assinatura do Aluno ou Responsável</span></div>
+                                    <div className="sign-line-container">
+                                        <div className="custom-line"></div>
+                                        <span className="line-label-normal uppercase">Assinatura do Aluno ou Responsável</span>
+                                    </div>
                                 </div>
 
                                 <div className="signature-block">
                                     <div className="date-input-container">{renderDateSlots(formData.dataRecebido)}<span className="line-label-below uppercase">Data</span></div>
-                                    <div className="sign-line-container"><div className="custom-line"></div><span className="line-label-below uppercase">Recebi a Documentação</span></div>
+                                    <div className="sign-line-container">
+                                        <div className="custom-line"></div>
+                                        {/* Removido o negrito conforme solicitado */}
+                                        <span className="line-label-normal uppercase">Recebi a Documentação</span>
+                                    </div>
                                 </div>
 
                                 <div className="mt-24 text-center flex flex-col items-center">
-                                    {/* Imagem da Assinatura (Aparece se assinatura.png existir) */}
                                     <img 
                                         src="./assinatura.png" 
                                         alt="Assinatura Diretor" 
