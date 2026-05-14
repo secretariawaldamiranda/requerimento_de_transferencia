@@ -71,6 +71,16 @@
         .file-input-hidden {
             display: none;
         }
+
+        /* Forçar campos na mesma linha sem quebra */
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            width: 100%;
+            gap: 15px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -176,12 +186,12 @@
                         </div>
                     </div>
 
-                    {/* Área do Documento - Ajustada para não transbordar */}
+                    {/* Área do Documento */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho Institucional */}
-                            <div className="flex items-center gap-6 mb-12">
+                            {/* Cabeçalho Institucional - Centralizado */}
+                            <div className="flex items-center justify-center gap-6 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
                                         src={logo} 
@@ -197,7 +207,7 @@
                                 </div>
                             </div>
 
-                            {/* Títulos */}
+                            {/* Títulos - Centralizados */}
                             <div className="text-center mb-10">
                                 <h1 className="text-[26pt] font-bold italic mb-8">Requerimento de Transferência</h1>
                                 <h2 className="text-[13pt] font-normal uppercase tracking-widest mt-4">
@@ -213,35 +223,36 @@
                                 <span className="line-label-below uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Seção de Dados em LINHA ÚNICA (Ajustada para caber na tela/impressão) */}
-                            <div className="flex items-center justify-between gap-x-2 mb-10 text-[11pt] w-full">
-                                <div className="flex items-baseline whitespace-nowrap">
+                            {/* Linha de Dados: Centralizada e Equilibrada */}
+                            <div className="info-row mb-10 text-[11pt]">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[70px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[65px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.ano}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline whitespace-nowrap">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Série:</span>
-                                    <div className="border-b border-black w-[70px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[60px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {" "}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline whitespace-nowrap">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Turma:</span>
                                     <div className="border-b border-black w-[50px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.turma}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline flex-1 min-w-0 mx-2">
+                                {/* Espaço maior para o Turno */}
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black flex-1 text-center font-bold uppercase min-h-[1.2rem] truncate px-1">
+                                    <div className="border-b border-black w-[130px] text-center font-bold uppercase px-1 min-h-[1.2rem]">
                                         {formData.turno}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline whitespace-nowrap">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[90px] text-center font-bold px-1 min-h-[1.2rem]">
+                                    <div className="border-b border-black w-[80px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.anoLetivo}
                                     </div>
                                 </div>
@@ -303,7 +314,6 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
         
-        // Ativa os ícones após a renderização
         setTimeout(() => lucide.createIcons(), 500);
     </script>
 </body>
