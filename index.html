@@ -108,14 +108,28 @@
             font-weight: bold;
         }
 
-        /* Versão sem linha para a data */
-        .no-line {
-            padding-bottom: 2px;
-            min-height: 28px;
+        /* Estilo harmônico para a data com espaços */
+        .date-slots {
             display: flex;
-            align-items: flex-end;
             justify-content: center;
+            align-items: flex-end;
+            gap: 4px;
             font-weight: bold;
+            min-height: 28px;
+        }
+
+        .date-slot-item {
+            border-bottom: 1.5px solid black;
+            min-width: 35px;
+            text-align: center;
+            padding-bottom: 2px;
+        }
+
+        .date-slot-year {
+            border-bottom: 1.5px solid black;
+            min-width: 50px;
+            text-align: center;
+            padding-bottom: 2px;
         }
     </style>
 </head>
@@ -162,6 +176,24 @@
 
             const handlePrint = () => {
                 window.print();
+            };
+
+            // Função para renderizar a data em slots
+            const renderDateSlots = (dateString) => {
+                const parts = dateString.split('/');
+                const day = parts[0] || '';
+                const month = parts[1] || '';
+                const year = parts[2] || '';
+
+                return (
+                    <div className="date-slots">
+                        <div className={day ? "date-slot-item" : "date-slot-item text-transparent"}>{day || "___"}</div>
+                        <span>/</span>
+                        <div className={month ? "date-slot-item" : "date-slot-item text-transparent"}>{month || "___"}</div>
+                        <span>/</span>
+                        <div className={year ? "date-slot-year" : "date-slot-year text-transparent"}>{year || "____"}</div>
+                    </div>
+                );
             };
 
             return (
@@ -212,6 +244,7 @@
                                     className="w-full p-2 border-2 border-slate-200 rounded text-sm" 
                                     value={formData.dataHoje} 
                                     onChange={handleChange} 
+                                    placeholder="DD/MM/AAAA"
                                 />
                             </div>
 
@@ -237,7 +270,7 @@
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho - Alinhado à Esquerda */}
+                            {/* Cabeçalho */}
                             <div className="flex items-center justify-start gap-6 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
@@ -304,11 +337,10 @@
                                 </div>
                             </div>
 
-                            {/* Professor(a) - Mantido na folha como enfeite */}
+                            {/* Professor(a) */}
                             <div className="flex items-baseline mb-16 text-[12pt]">
                                 <span className="mr-2 whitespace-nowrap">Prof. (a):</span>
                                 <div className="border-b border-black flex-grow font-bold px-2 uppercase min-h-[1.4rem] text-center">
-                                    {/* Campo vazio para enfeite */}
                                 </div>
                             </div>
 
@@ -318,13 +350,10 @@
 
                             {/* Seção de Assinaturas Harmoniosa */}
                             <div className="space-y-16">
-                                {/* Primeira Assinatura (Preenchida com hoje) */}
+                                {/* Primeira Assinatura (Data de hoje com aparência de slots) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
-                                        {/* Removida a classe custom-line para tirar a borda preta */}
-                                        <div className="no-line">
-                                            {formData.dataHoje}
-                                        </div>
+                                        {renderDateSlots(formData.dataHoje)}
                                         <span className="line-label-below uppercase">Data</span>
                                     </div>
                                     <div className="sign-line-container">
@@ -333,13 +362,10 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura (Em branco) */}
+                                {/* Segunda Assinatura (Aparência idêntica mas em branco) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
-                                        {/* Removida a classe custom-line para tirar a borda preta */}
-                                        <div className="no-line">
-                                            ___/___/___
-                                        </div>
+                                        {renderDateSlots("")}
                                         <span className="line-label-below uppercase">Data</span>
                                     </div>
                                     <div className="sign-line-container">
