@@ -53,9 +53,10 @@
             margin-top: 4px;
         }
 
+        /* Brasão aumentado e proporcional */
         .crest-container {
-            width: 90px;
-            height: 90px;
+            width: 120px;
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -139,7 +140,6 @@
             padding: 0 2px;
         }
 
-        /* Estilo para input de data no painel */
         input[type="date"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
             filter: invert(0.5);
@@ -153,7 +153,6 @@
         const { useState, useEffect } = React;
 
         function App() {
-            // Função para pegar a data de hoje no formato YYYY-MM-DD (para o input date)
             const getTodayISODate = () => {
                 const now = new Date();
                 return now.toISOString().split('T')[0];
@@ -166,8 +165,8 @@
                 turma: '',
                 turno: '',
                 anoLetivo: new Date().getFullYear().toString(),
-                dataRequerimento: getTodayISODate(), // Armazena em formato ISO (YYYY-MM-DD)
-                dataRecebido: '', // Armazena em formato ISO
+                dataRequerimento: getTodayISODate(),
+                dataRecebido: '',
             });
 
             const handleChange = (e) => {
@@ -189,14 +188,12 @@
                 window.print();
             };
 
-            // Converte YYYY-MM-DD para DD/MM/AAAA para exibição nos slots
             const formatDateForDoc = (isoDate) => {
                 if (!isoDate) return "";
                 const [year, month, day] = isoDate.split('-');
                 return `${day}/${month}/${year}`;
             };
 
-            // Função para renderizar a data em slots sobre a linha única
             const renderDateSlots = (isoDate) => {
                 const dateString = formatDateForDoc(isoDate);
                 const parts = dateString ? dateString.split('/') : ["", "", ""];
@@ -257,7 +254,7 @@
                             </div>
 
                             <div className="pt-4 border-t border-slate-100">
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data do Requerimento (Calendário)</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data do Requerimento</label>
                                 <input 
                                     type="date"
                                     name="dataRequerimento" 
@@ -268,7 +265,7 @@
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data do Recebimento (Calendário)</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data do Recebimento</label>
                                 <input 
                                     type="date"
                                     name="dataRecebido" 
@@ -300,17 +297,17 @@
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho */}
-                            <div className="flex items-center justify-start gap-6 mb-12">
+                            {/* Cabeçalho - Brasão Aumentado e Texto em 16pt */}
+                            <div className="flex items-center justify-start gap-8 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
                                         src={logo} 
                                         alt="Brasão" 
                                         className="crest-img" 
-                                        onError={(e) => { e.target.src = 'https://via.placeholder.com/100?text=BRASÃO'; }}
+                                        onError={(e) => { e.target.src = 'https://via.placeholder.com/120?text=BRASÃO'; }}
                                     />
                                 </div>
-                                <div className="text-[12pt] font-bold leading-tight uppercase text-left">
+                                <div className="text-[16pt] font-bold leading-tight uppercase text-left">
                                     <p>Estado de Goiás</p>
                                     <p>Prefeitura Municipal de Formosa</p>
                                     <p>Secretaria Municipal de Educação</p>
@@ -380,7 +377,7 @@
 
                             {/* Seção de Assinaturas */}
                             <div className="space-y-16">
-                                {/* Primeira Assinatura - Com barras e preenchimento via calendário */}
+                                {/* Primeira Assinatura */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataRequerimento)}
@@ -392,7 +389,7 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura - Com barras e preenchimento via calendário */}
+                                {/* Segunda Assinatura */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataRecebido)}
