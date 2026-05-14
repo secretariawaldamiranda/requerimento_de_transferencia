@@ -83,16 +83,16 @@
         .info-row {
             display: flex;
             align-items: baseline;
-            justify-content: center;
+            justify-content: space-between;
             width: 100%;
-            gap: 16px; /* Aumentado o espaçamento entre colunas */
+            gap: 12px;
             white-space: nowrap;
         }
         
         .signature-block {
             display: flex;
             align-items: flex-start;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
         }
 
@@ -100,7 +100,7 @@
             display: flex;
             align-items: baseline;
             gap: 6px;
-            min-width: 220px;
+            flex-shrink: 0;
             padding-top: 8px; 
         }
 
@@ -130,17 +130,16 @@
             min-height: 32px;
             border-bottom: 1px solid black; 
             padding-bottom: 0px; 
-            min-width: 160px;
         }
 
         .date-slot-item {
-            min-width: 38px;
+            min-width: 32px;
             text-align: center;
             line-height: 1; 
         }
 
         .date-slot-year {
-            min-width: 60px;
+            min-width: 50px;
             text-align: center;
             line-height: 1;
         }
@@ -149,11 +148,6 @@
             font-size: 1.4rem;
             line-height: 1; 
             padding: 0 2px;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            cursor: pointer;
-            filter: invert(0.5);
         }
 
         .suggestions-list {
@@ -179,7 +173,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect } = React;
 
         function App() {
             const getTodayISODate = () => {
@@ -226,7 +220,6 @@
                 const lines = text.split(/\r?\n/);
                 const result = [];
                 const startIdx = lines[0].toLowerCase().includes('aluno') ? 1 : 0;
-
                 for (let i = startIdx; i < lines.length; i++) {
                     if (lines[i].trim() === "") continue;
                     const columns = lines[i].split(';');
@@ -275,9 +268,7 @@
                 setShowSuggestions(false);
             };
 
-            const handlePrint = () => {
-                window.print();
-            };
+            const handlePrint = () => { window.print(); };
 
             const formatDateForDoc = (isoDate) => {
                 if (!isoDate) return "";
@@ -291,7 +282,6 @@
                 const day = parts[0] || '';
                 const month = parts[1] || '';
                 const year = parts[2] || '';
-
                 return (
                     <div className="date-slots-underlined">
                         <div className="date-slot-item">{day}</div>
@@ -314,18 +304,12 @@
                             <i data-lucide="database"></i>
                             <h1 className="text-xl font-bold uppercase tracking-tight">Automação</h1>
                         </div>
-
                         <div className="space-y-4">
                             <div className="mb-4">
                                 {loadStatus === 'success' ? (
                                     <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm font-semibold">
                                         <i data-lucide="check-circle" size="18"></i>
                                         {csvData.length} alunos carregados.
-                                    </div>
-                                ) : loadStatus === 'loading' ? (
-                                    <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm animate-pulse">
-                                        <i data-lucide="loader" size="18" className="animate-spin"></i>
-                                        Carregando...
                                     </div>
                                 ) : (
                                     <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm text-center">
@@ -336,7 +320,6 @@
                                     </div>
                                 )}
                             </div>
-
                             <div className="relative">
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Buscar Aluno</label>
                                 <input 
@@ -348,63 +331,43 @@
                                     placeholder="Digite o nome..."
                                 />
                                 {showSuggestions && searchTerm && csvData.length > 0 && (
-                                    <div className="suggestions-list shadow-2xl border-2 border-blue-100">
+                                    <div className="suggestions-list">
                                         {filteredStudents.map((s, idx) => (
-                                            <div 
-                                                key={idx} 
-                                                className="p-3 hover:bg-blue-600 hover:text-white cursor-pointer border-b last:border-0 text-sm font-bold uppercase"
-                                                onClick={() => selectStudent(s)}
-                                            >
+                                            <div key={idx} className="p-3 hover:bg-blue-600 hover:text-white cursor-pointer border-b last:border-0 text-sm font-bold uppercase" onClick={() => selectStudent(s)}>
                                                 {s.nome} <span className="text-[10px] opacity-70">({s.ano} {s.turma})</span>
                                             </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
-
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
-                                    <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.ano} onChange={handleChange} />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
-                                    <input name="turma" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.turma} onChange={handleChange} />
-                                </div>
+                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
+                                <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.ano} onChange={handleChange} /></div>
+                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
+                                <input name="turma" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.turma} onChange={handleChange} /></div>
                             </div>
-
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turno</label>
-                                    <input name="turno" className="w-full p-2 border-2 border-slate-200 rounded text-sm uppercase" value={formData.turno} onChange={handleChange} />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano Letivo</label>
-                                    <input name="anoLetivo" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.anoLetivo} onChange={handleChange} />
-                                </div>
+                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turno</label>
+                                <input name="turno" className="w-full p-2 border-2 border-slate-200 rounded text-sm uppercase" value={formData.turno} onChange={handleChange} /></div>
+                                <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano Letivo</label>
+                                <input name="anoLetivo" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.anoLetivo} onChange={handleChange} /></div>
                             </div>
-
                             <div className="pt-4 border-t border-slate-100">
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data Requerimento</label>
                                 <input type="date" name="dataRequerimento" className="w-full p-2 border-2 border-slate-200 rounded text-sm cursor-pointer" value={formData.dataRequerimento} onChange={handleChange} />
                             </div>
-
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data Recebido</label>
                                 <input type="date" name="dataRecebido" className="w-full p-2 border-2 border-slate-200 rounded text-sm cursor-pointer" value={formData.dataRecebido} onChange={handleChange} />
                             </div>
-
-                            <button onClick={handlePrint} className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg mt-4">
-                                <i data-lucide="printer"></i>
-                                IMPRIMIR REQUERIMENTO
-                            </button>
+                            <button onClick={handlePrint} className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2 shadow-lg mt-4"><i data-lucide="printer"></i> IMPRIMIR</button>
                         </div>
                     </div>
 
-                    {/* Área do Documento */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
-                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
+                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2cm] text-black official-doc-font box-border">
                             
+                            {/* Cabeçalho */}
                             <div className="flex items-center justify-start gap-8 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img src={logo} alt="Brasão" className="crest-img" onError={(e) => { e.target.src = 'https://via.placeholder.com/120?text=BRASÃO'; }} />
@@ -426,28 +389,28 @@
                                 <span className="line-label-14 uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Informações Escolares em 14pt */}
+                            {/* Informações Escolares em 14pt - Ajustadas para NÃO transbordar */}
                             <div className="info-row mb-10 text-[14pt]">
-                                <div className="flex items-baseline shrink-0">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[130px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
+                                    <div className="border-b border-black w-[70px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
                                 </div>
-                                <div className="flex items-baseline shrink-0">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black w-[110px] text-center font-bold min-h-[1.5rem]">{formData.turma}</div>
+                                    <div className="border-b border-black w-[50px] text-center font-bold min-h-[1.5rem]">{formData.turma}</div>
                                 </div>
-                                <div className="flex items-baseline min-w-[210px]">
+                                <div className="flex items-baseline flex-grow justify-center">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black flex-grow text-center font-bold uppercase min-h-[1.5rem]">{formData.turno}</div>
+                                    <div className="border-b border-black min-w-[120px] text-center font-bold uppercase min-h-[1.5rem]">{formData.turno}</div>
                                 </div>
-                                <div className="flex items-baseline shrink-0">
+                                <div className="flex items-baseline">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[130px] text-center font-bold min-h-[1.5rem]">{formData.anoLetivo}</div>
+                                    <div className="border-b border-black w-[100px] text-center font-bold min-h-[1.5rem]">{formData.anoLetivo}</div>
                                 </div>
                             </div>
 
                             <div className="flex items-baseline mb-16 text-[12pt]">
-                                <span className="mr-2 whitespace-nowrap">Prof. (a):</span>
+                                <span className="mr-2 whitespace-nowrap text-[14pt]">Prof. (a):</span>
                                 <div className="border-b border-black flex-grow font-bold px-2 uppercase min-h-[1.4rem] text-center"></div>
                             </div>
 
@@ -477,23 +440,16 @@
                                 </div>
 
                                 <div className="mt-24 text-center flex flex-col items-center">
-                                    <img 
-                                        src="./assinatura.png" 
-                                        alt="Assinatura Diretor" 
-                                        className="director-sign-img"
-                                        onError={(e) => { e.target.style.display = 'none'; }} 
-                                    />
+                                    <img src="./assinatura.png" alt="Assinatura" className="director-sign-img" onError={(e) => { e.target.style.display = 'none'; }} />
                                     <div className="border-b border-black w-full h-8"></div>
                                     <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             );
         }
-
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
         setTimeout(() => lucide.createIcons(), 500);
