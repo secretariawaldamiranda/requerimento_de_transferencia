@@ -100,12 +100,13 @@
 
         .custom-line {
             border-bottom: 1.5px solid black;
-            padding-bottom: 2px;
+            padding-bottom: 0px;
             min-height: 32px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
             font-weight: bold;
+            line-height: 1;
         }
 
         /* Estrutura para data tocando a linha única */
@@ -123,18 +124,18 @@
         .date-slot-item {
             min-width: 32px;
             text-align: center;
-            line-height: 1.8;
+            line-height: 1; /* Alinha o texto na base */
         }
 
         .date-slot-year {
             min-width: 48px;
             text-align: center;
-            line-height: 1.8;
+            line-height: 1; /* Alinha o texto na base */
         }
 
         .date-separator {
             font-size: 1.2rem;
-            line-height: 1.8;
+            line-height: 1; /* Garante que a barra toque a linha */
             padding: 0 2px;
         }
     </style>
@@ -193,11 +194,11 @@
 
                 return (
                     <div className="date-slots-underlined">
-                        <div className="date-slot-item">{day}</div>
+                        <div className="date-slot-item">{day || "___"}</div>
                         <span className="date-separator">/</span>
-                        <div className="date-slot-item">{month}</div>
+                        <div className="date-slot-item">{month || "___"}</div>
                         <span className="date-separator">/</span>
-                        <div className="date-slot-year">{year}</div>
+                        <div className="date-slot-year">{year || "____"}</div>
                     </div>
                 );
             };
@@ -276,7 +277,7 @@
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
-                            {/* Cabeçalho - Alinhado à Esquerda conforme solicitado */}
+                            {/* Cabeçalho */}
                             <div className="flex items-center justify-start gap-6 mb-12">
                                 <div className="crest-container shrink-0">
                                     <img 
@@ -368,7 +369,7 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura - Agora com as barras inclinadas sobre a linha única */}
+                                {/* Segunda Assinatura - Data em branco tocando a linha */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots("")}
