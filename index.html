@@ -113,7 +113,7 @@
 
             return (
                 <div className="flex flex-col lg:flex-row min-h-screen">
-                    {/* Sidebar de Formulário - Oculta na Impressão */}
+                    {/* Painel lateral de preenchimento (Oculto na Impressão) */}
                     <div className="no-print w-full lg:w-[400px] bg-white border-r border-slate-300 p-6 shadow-xl z-10 overflow-y-auto">
                         <div className="flex items-center gap-3 mb-8 text-blue-900 border-b pb-4">
                             <i data-lucide="file-edit"></i>
@@ -176,9 +176,9 @@
                         </div>
                     </div>
 
-                    {/* Área do Documento - Layout Horizontal Rigoroso */}
+                    {/* Área do Documento - Ajustada para não transbordar */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
-                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font">
+                        <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
                             {/* Cabeçalho Institucional */}
                             <div className="flex items-center gap-6 mb-12">
@@ -213,35 +213,35 @@
                                 <span className="line-label-below uppercase">Nome do Aluno</span>
                             </div>
 
-                            {/* Seção de Dados em LINHA ÚNICA (Sem wrap) */}
-                            <div className="flex items-center gap-x-4 mb-10 text-[12pt] whitespace-nowrap">
-                                <div className="flex items-baseline shrink-0">
+                            {/* Seção de Dados em LINHA ÚNICA (Ajustada para caber na tela/impressão) */}
+                            <div className="flex items-center justify-between gap-x-2 mb-10 text-[11pt] w-full">
+                                <div className="flex items-baseline whitespace-nowrap">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[80px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[70px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.ano}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline shrink-0">
+                                <div className="flex items-baseline whitespace-nowrap">
                                     <span className="mr-1">Série:</span>
-                                    <div className="border-b border-black w-[80px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[70px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {" "}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline shrink-0">
+                                <div className="flex items-baseline whitespace-nowrap">
                                     <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black w-[60px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[50px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.turma}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline flex-grow">
+                                <div className="flex items-baseline flex-1 min-w-0 mx-2">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black flex-grow min-w-[100px] text-center font-bold px-1 uppercase">
+                                    <div className="border-b border-black flex-1 text-center font-bold uppercase min-h-[1.2rem] truncate px-1">
                                         {formData.turno}
                                     </div>
                                 </div>
-                                <div className="flex items-baseline shrink-0">
+                                <div className="flex items-baseline whitespace-nowrap">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[100px] text-center font-bold px-1">
+                                    <div className="border-b border-black w-[90px] text-center font-bold px-1 min-h-[1.2rem]">
                                         {formData.anoLetivo}
                                     </div>
                                 </div>
@@ -250,12 +250,12 @@
                             {/* Professor(a) */}
                             <div className="flex items-baseline mb-16 text-[12pt]">
                                 <span className="mr-2 whitespace-nowrap">Prof. (a):</span>
-                                <div className="border-b border-black flex-grow font-bold px-2 uppercase">
+                                <div className="border-b border-black flex-grow font-bold px-2 uppercase min-h-[1.4rem]">
                                     {formData.professor}
                                 </div>
                             </div>
 
-                            {/* Requer sua Transferência */}
+                            {/* Mensagem Central */}
                             <div className="text-center font-bold text-[18pt] my-20 uppercase">
                                 Requer sua Transferência
                             </div>
@@ -263,7 +263,7 @@
                             {/* Assinaturas e Datas */}
                             <div className="space-y-16">
                                 <div className="flex gap-8 items-start">
-                                    <div className="w-[180px]">
+                                    <div className="w-[180px] shrink-0">
                                         <div className="border-b border-black h-8 flex justify-between px-4 items-end font-bold text-lg">
                                             <span>/</span><span>/</span>
                                         </div>
@@ -276,7 +276,7 @@
                                 </div>
 
                                 <div className="flex gap-8 items-start">
-                                    <div className="w-[180px]">
+                                    <div className="w-[180px] shrink-0">
                                         <div className="border-b border-black h-8 flex justify-between px-4 items-end font-bold text-lg">
                                             <span>/</span><span>/</span>
                                         </div>
@@ -303,6 +303,7 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
         
+        // Ativa os ícones após a renderização
         setTimeout(() => lucide.createIcons(), 500);
     </script>
 </body>
