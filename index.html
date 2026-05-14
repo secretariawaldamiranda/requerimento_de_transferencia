@@ -45,7 +45,6 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Estilo para legendas abaixo da linha */
         .line-label-below {
             font-size: 10pt;
             font-weight: bold;
@@ -54,7 +53,6 @@
             margin-top: 4px;
         }
 
-        /* Versão sem negrito para legendas específicas */
         .line-label-normal {
             font-size: 10pt;
             font-weight: normal;
@@ -63,7 +61,6 @@
             margin-top: 4px;
         }
 
-        /* Brasão aumentado e proporcional */
         .crest-container {
             width: 120px;
             height: 120px;
@@ -83,7 +80,6 @@
             display: none;
         }
 
-        /* Forçar campos na mesma linha sem quebra */
         .info-row {
             display: flex;
             align-items: baseline;
@@ -120,7 +116,6 @@
             line-height: 1;
         }
 
-        /* Estrutura para data tocando a linha única */
         .date-slots-underlined {
             display: flex;
             justify-content: center;
@@ -155,7 +150,6 @@
             filter: invert(0.5);
         }
 
-        /* Estilo para lista de sugestões do CSV */
         .suggestions-list {
             max-height: 250px;
             overflow-y: auto;
@@ -185,11 +179,12 @@
             const [csvData, setCsvData] = useState([]);
             const [searchTerm, setSearchTerm] = useState('');
             const [showSuggestions, setShowSuggestions] = useState(false);
-            const [loadStatus, setLoadStatus] = useState('idle'); // idle, loading, success, error
+            const [loadStatus, setLoadStatus] = useState('idle');
             
             const [formData, setFormData] = useState({
                 nomeAluno: '',
                 ano: '',
+                serie: '', // Campo Série adicionado ao estado
                 turma: '',
                 turno: '',
                 anoLetivo: new Date().getFullYear().toString(),
@@ -197,7 +192,6 @@
                 dataRecebido: '',
             });
 
-            // Carregamento automático do CSV ao iniciar
             useEffect(() => {
                 const autoFetchCsv = async () => {
                     setLoadStatus('loading');
@@ -211,7 +205,6 @@
                             setLoadStatus('error');
                         }
                     } catch (err) {
-                        console.log("Erro ao carregar CSV automaticamente. Aguardando upload manual.");
                         setLoadStatus('error');
                     }
                 };
@@ -264,6 +257,7 @@
                     ...formData,
                     nomeAluno: student.nome,
                     ano: student.ano,
+                    serie: '\u00A0', // Adiciona o caractere invisível (Non-breaking space)
                     turma: student.turma,
                     turno: student.turno
                 });
@@ -305,7 +299,6 @@
 
             return (
                 <div className="flex flex-col lg:flex-row min-h-screen">
-                    {/* Painel lateral de preenchimento */}
                     <div className="no-print w-full lg:w-[400px] bg-white border-r border-slate-300 p-6 shadow-xl z-10 overflow-y-auto">
                         <div className="flex items-center gap-3 mb-8 text-blue-900 border-b pb-4">
                             <i data-lucide="database"></i>
@@ -313,7 +306,6 @@
                         </div>
 
                         <div className="space-y-4">
-                            {/* Status do CSV Automático */}
                             <div className="mb-4">
                                 {loadStatus === 'success' ? (
                                     <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm font-semibold">
@@ -326,7 +318,7 @@
                                         Carregando...
                                     </div>
                                 ) : (
-                                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
+                                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm text-center">
                                         <label className="text-blue-600 underline cursor-pointer">
                                             Carregar CUBO.CSV manualmente
                                             <input type="file" className="hidden" accept=".csv" onChange={handleCsvUploadManual} />
@@ -360,10 +352,14 @@
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-3 gap-3">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
                                     <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.ano} onChange={handleChange} />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Série</label>
+                                    <input name="serie" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.serie === '\u00A0' ? '' : formData.serie} onChange={handleChange} />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
@@ -399,7 +395,6 @@
                         </div>
                     </div>
 
-                    {/* Área do Documento */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
@@ -425,11 +420,28 @@
                             </div>
 
                             <div className="info-row mb-10 text-[11pt]">
-                                <div className="flex items-baseline shrink-0"><span className="mr-1">Ano:</span><div className="border-b border-black w-[80px] text-center font-bold min-h-[1.2rem]">{formData.ano}</div></div>
-                                <div className="flex items-baseline shrink-0"><span className="mr-1">Série:</span><div className="border-b border-black w-[80px] text-center font-bold min-h-[1.2rem]"> </div></div>
-                                <div className="flex items-baseline shrink-0"><span className="mr-1">Turma:</span><div className="border-b border-black w-[60px] text-center font-bold min-h-[1.2rem]">{formData.turma}</div></div>
-                                <div className="flex items-baseline min-w-[160px]"><span className="mr-1">Turno:</span><div className="border-b border-black flex-grow text-center font-bold uppercase min-h-[1.2rem]">{formData.turno}</div></div>
-                                <div className="flex items-baseline shrink-0"><span className="mr-1">Ano Letivo:</span><div className="border-b border-black w-[90px] text-center font-bold min-h-[1.2rem]">{formData.anoLetivo}</div></div>
+                                <div className="flex items-baseline shrink-0">
+                                    <span className="mr-1">Ano:</span>
+                                    <div className="border-b border-black w-[80px] text-center font-bold min-h-[1.2rem]">{formData.ano}</div>
+                                </div>
+                                <div className="flex items-baseline shrink-0">
+                                    <span className="mr-1">Série:</span>
+                                    <div className="border-b border-black w-[80px] text-center font-bold min-h-[1.2rem]">
+                                        {formData.serie || '\u00A0'}
+                                    </div>
+                                </div>
+                                <div className="flex items-baseline shrink-0">
+                                    <span className="mr-1">Turma:</span>
+                                    <div className="border-b border-black w-[60px] text-center font-bold min-h-[1.2rem]">{formData.turma}</div>
+                                </div>
+                                <div className="flex items-baseline min-w-[160px]">
+                                    <span className="mr-1">Turno:</span>
+                                    <div className="border-b border-black flex-grow text-center font-bold uppercase min-h-[1.2rem]">{formData.turno}</div>
+                                </div>
+                                <div className="flex items-baseline shrink-0">
+                                    <span className="mr-1">Ano Letivo:</span>
+                                    <div className="border-b border-black w-[90px] text-center font-bold min-h-[1.2rem]">{formData.anoLetivo}</div>
+                                </div>
                             </div>
 
                             <div className="flex items-baseline mb-16 text-[12pt]">
@@ -451,9 +463,7 @@
                                 </div>
 
                                 <div className="mt-24">
-                                    {/* Linha fina (border-b) em vez de border-b-2 */}
                                     <div className="border-b border-black w-full h-8"></div>
-                                    {/* Legenda sem negrito (line-label-normal) */}
                                     <span className="line-label-normal uppercase text-[12pt]">Deferimento do Diretor / Secretário</span>
                                 </div>
                             </div>
