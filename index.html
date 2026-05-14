@@ -45,16 +45,16 @@
             font-family: Arial, sans-serif;
         }
 
-        .line-label-below {
+        .line-label-normal {
             font-size: 10pt;
-            font-weight: bold;
+            font-weight: normal;
             text-align: center;
             display: block;
             margin-top: 4px;
         }
 
-        .line-label-normal {
-            font-size: 10pt;
+        .line-label-14 {
+            font-size: 14pt;
             font-weight: normal;
             text-align: center;
             display: block;
@@ -89,18 +89,21 @@
             white-space: nowrap;
         }
         
+        /* Bloco de assinatura ajustado para alinhamento superior das linhas */
         .signature-block {
             display: flex;
-            align-items: flex-end;
+            align-items: flex-start; /* Alinha o topo (linhas) */
             gap: 20px;
             width: 100%;
         }
 
-        .date-side-container {
+        .date-side-wrapper {
             display: flex;
             align-items: baseline;
-            gap: 4px;
-            min-width: 180px;
+            gap: 6px;
+            min-width: 220px;
+            /* Pequeno ajuste para alinhar o texto "Data:" com o traço da assinatura ao lado */
+            padding-top: 6px; 
         }
 
         .sign-line-container {
@@ -118,33 +121,34 @@
             line-height: 1;
         }
 
-        /* Estrutura para data SEM negrito e com linha mais fina */
+        /* Estrutura para data 14pt */
         .date-slots-underlined {
             display: flex;
             justify-content: center;
             align-items: flex-end;
             gap: 0;
             font-weight: normal; 
+            font-size: 14pt;
             min-height: 32px;
             border-bottom: 1px solid black; 
             padding-bottom: 0px; 
-            min-width: 130px;
+            min-width: 160px;
         }
 
         .date-slot-item {
-            min-width: 32px;
+            min-width: 38px;
             text-align: center;
             line-height: 1; 
         }
 
         .date-slot-year {
-            min-width: 48px;
+            min-width: 60px;
             text-align: center;
             line-height: 1;
         }
 
         .date-separator {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             line-height: 1; 
             padding: 0 2px;
         }
@@ -462,25 +466,27 @@
                             <div className="text-center font-bold text-[18pt] my-20 uppercase tracking-wide">Requer sua Transferência</div>
 
                             <div className="space-y-16">
+                                {/* Primeiro Bloco de Assinatura Alinhado */}
                                 <div className="signature-block">
-                                    <div className="date-side-container">
-                                        <span className="text-[11pt] uppercase font-normal">Data:</span>
+                                    <div className="date-side-wrapper">
+                                        <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
                                         {renderDateSlots(formData.dataRequerimento)}
                                     </div>
                                     <div className="sign-line-container">
                                         <div className="custom-line"></div>
-                                        <span className="line-label-normal uppercase">Assinatura do Aluno ou Responsável</span>
+                                        <span className="line-label-14 uppercase">Assinatura do Aluno ou Responsável</span>
                                     </div>
                                 </div>
 
+                                {/* Segundo Bloco de Assinatura Alinhado */}
                                 <div className="signature-block">
-                                    <div className="date-side-container">
-                                        <span className="text-[11pt] uppercase font-normal">Data:</span>
+                                    <div className="date-side-wrapper">
+                                        <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
                                         {renderDateSlots(formData.dataRecebido)}
                                     </div>
                                     <div className="sign-line-container">
                                         <div className="custom-line"></div>
-                                        <span className="line-label-normal uppercase">Recebi a Documentação</span>
+                                        <span className="line-label-14 uppercase">Recebi a Documentação</span>
                                     </div>
                                 </div>
 
