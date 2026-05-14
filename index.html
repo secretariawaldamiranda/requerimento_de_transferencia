@@ -1,287 +1,209 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, Upload, Printer, FileText, User, Calendar, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Printer, ClipboardCheck } from 'lucide-react';
 
 const App = () => {
-  const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [professor, setProfessor] = useState('');
-  const [docDate, setDocDate] = useState(new Date().toLocaleDateString('pt-BR'));
-  const [isDragOver, setIsDragOver] = useState(false);
+  const [formData, setFormData] = useState({
+    nomeAluno: '',
+    ano: '',
+    serie: '',
+    turma: '',
+    turno: '',
+    anoLetivo: new Date().getFullYear().toString(),
+    professor: '',
+  });
 
-  // Processamento do CSV
-  const handleFileUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target.result;
-      const lines = text.split(/\r?\n/);
-      if (lines.length < 2) return;
-
-      // O CUBO.CSV usa ";" como separador
-      const headers = lines[0].split(';').map(h => h.trim());
-      const result = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        const currentline = lines[i].split(';');
-        const obj = {};
-        headers.forEach((header, index) => {
-          obj[header] = currentline[index]?.trim();
-        });
-        result.push(obj);
-      }
-      setData(result);
-    };
-    reader.readAsText(file, 'ISO-8859-1'); // Codificação comum para CSVs brasileiros
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
-
-  const filteredStudents = searchTerm.length > 2 
-    ? data.filter(s => s.Aluno?.toLowerCase().includes(searchTerm.toLowerCase())).slice(0, 8)
-    : [];
 
   const handlePrint = () => {
     window.print();
   };
 
-  const reset = () => {
-    setData([]);
-    setSearchTerm('');
-    setSelectedStudent(null);
-  };
-
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col items-center py-8 px-4 font-sans print:bg-white print:p-0">
-      
-      {/* PAINEL DE CONTROLE - OCULTO NA IMPRESSÃO */}
-      <div className="print:hidden w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden mb-8">
-        <div className="bg-blue-700 p-6 text-white">
-          <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <FileText /> Automação de Transferência
-            </h1>
-            {data.length > 0 && (
-              <button 
-                onClick={reset}
-                className="text-xs bg-red-500/20 hover:bg-red-500/40 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
-              >
-                <Trash2 size={14} /> Limpar Base
-              </button>
-            )}
+    <div className="min-h-screen bg-gray-200 p-4 md:p-8 font-sans print:p-0 print:bg-white">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8 print:block">
+        
+        {/* Painel de Entrada de Dados */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-300 print:hidden h-fit sticky top-8">
+          <div className="flex items-center gap-2 mb-6 text-slate-800 border-b pb-4">
+            <ClipboardCheck size={24} />
+            <h1 className="text-xl font-bold">Preencher Requerimento</h1>
           </div>
-          <p className="text-blue-100 text-sm mt-1">Escola Municipal Walda Miranda de Paiva</p>
-        </div>
 
-        <div className="p-6 space-y-6">
-          {/* Passo 1: Upload */}
-          {data.length === 0 ? (
-            <div 
-              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-              onDragLeave={() => setIsDragOver(false)}
-              onDrop={(e) => { e.preventDefault(); handleFileUpload({ target: { files: e.dataTransfer.files } }); }}
-              className={`border-2 border-dashed rounded-xl p-10 text-center transition-all ${isDragOver ? 'border-blue-500 bg-blue-50' : 'border-slate-300 bg-slate-50'}`}
-            >
-              <Upload className="mx-auto text-slate-400 mb-4" size={48} />
-              <h3 className="text-lg font-semibold text-slate-700">Carregar Banco de Dados</h3>
-              <p className="text-slate-500 text-sm mb-4">Selecione o arquivo CUBO.CSV para iniciar</p>
-              <label className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors font-medium">
-                Selecionar Arquivo
-                <input type="file" accept=".csv" onChange={handleFileUpload} className="hidden" />
-              </label>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Aluno</label>
+              <input
+                type="text"
+                name="nomeAluno"
+                className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:border-blue-600 outline-none uppercase font-semibold"
+                onChange={handleInputChange}
+                value={formData.nomeAluno}
+              />
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
-              {/* Busca de Aluno */}
-              <div className="relative">
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Pesquisar Aluno</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 text-slate-400" size={18} />
-                  <input
-                    type="text"
-                    className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    placeholder="Digite o nome..."
-                    value={searchTerm}
-                    onChange={(e) => {setSearchTerm(e.target.value); setSelectedStudent(null);}}
-                  />
-                </div>
 
-                {filteredStudents.length > 0 && !selectedStudent && (
-                  <div className="absolute z-20 w-full mt-1 bg-white border border-slate-200 shadow-2xl rounded-lg overflow-hidden">
-                    {filteredStudents.map((s, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => { setSelectedStudent(s); setSearchTerm(s.Aluno); }}
-                        className="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center justify-between border-b last:border-0 border-slate-100"
-                      >
-                        <div>
-                          <p className="font-semibold text-slate-800 text-sm">{s.Aluno}</p>
-                          <p className="text-xs text-slate-500">{s.Ano} - {s.Turma}</p>
-                        </div>
-                        <User size={14} className="text-slate-300" />
-                      </button>
-                    ))}
-                  </div>
-                )}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Ano</label>
+                <input type="text" name="ano" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
               </div>
-
-              {/* Informações Extras */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Professor(a)</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    placeholder="Nome do docente"
-                    value={professor}
-                    onChange={(e) => setProfessor(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Data</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    value={docDate}
-                    onChange={(e) => setDocDate(e.target.value)}
-                  />
-                </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Série</label>
+                <input type="text" name="serie" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
               </div>
             </div>
-          )}
-        </div>
 
-        {selectedStudent && (
-          <div className="bg-slate-50 p-4 border-t border-slate-200 flex justify-end gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Turma</label>
+                <input type="text" name="turma" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Turno</label>
+                <input type="text" name="turno" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Professor(a)</label>
+              <input type="text" name="professor" className="w-full px-3 py-2 border-2 border-gray-200 rounded" onChange={handleInputChange} />
+            </div>
+
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-lg shadow-green-100 transition-all font-bold uppercase tracking-wider text-sm"
+              className="w-full mt-6 bg-slate-900 hover:bg-black text-white font-bold py-4 rounded shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-95"
             >
-              <Printer size={18} /> Imprimir Requerimento
+              <Printer size={20} />
+              GERAR IMPRESSÃO
             </button>
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* DOCUMENTO - VISUAL BASEADO NO DOCX */}
-      <div className="document-container relative print:m-0 print:shadow-none">
-        <div className="bg-white w-[210mm] min-h-[297mm] p-[25mm] shadow-2xl flex flex-col text-black font-serif print:shadow-none print:w-full print:p-[15mm]">
+        {/* O DOCUMENTO (IDÊNTICO À IMAGEM) */}
+        <div className="bg-white shadow-2xl p-[1.5cm] md:p-[2.5cm] min-h-[29.7cm] w-full max-w-[21cm] mx-auto print:shadow-none print:p-[1.5cm] print:m-0" id="document-preview">
+          <style>
+            {`
+              @media print {
+                @page { size: A4; margin: 0; }
+                body { background: white; }
+                .print-hidden { display: none !important; }
+              }
+              .official-font { font-family: 'Arial', sans-serif; }
+              .line-label { font-size: 10pt; font-weight: bold; text-align: center; display: block; margin-top: 2px; }
+            `}
+          </style>
           
-          {/* Cabeçalho */}
-          <div className="text-center space-y-6 mb-12">
-            <h1 className="text-2xl font-bold uppercase underline">Requerimento de Transferência</h1>
-            <h2 className="text-xl font-bold tracking-tight">ESCOLA MUNICIPAL WALDA MIRANDA DE PAIVA</h2>
-          </div>
-
-          {/* Nome do Aluno */}
-          <div className="mb-8">
-            <label className="text-sm font-bold block mb-1">NOME DO ALUNO</label>
-            <div className="border-b-2 border-black py-1 px-2 text-xl min-h-[40px] flex items-end">
-              {selectedStudent?.Aluno || ''}
-            </div>
-          </div>
-
-          {/* Dados Escolares */}
-          <div className="grid grid-cols-12 gap-x-4 gap-y-8 mb-8 items-end">
-            <div className="col-span-2">
-              <span className="text-sm">Ano:</span>
-              <div className="border-b border-black text-center min-h-[25px]">
-                {selectedStudent?.Ano?.split('°')[0] || '______'}
-              </div>
-            </div>
-            <div className="col-span-2">
-              <span className="text-sm">Série:</span>
-              <div className="border-b border-black text-center min-h-[25px]">
-                {selectedStudent?.Ano || '______'}
-              </div>
-            </div>
-            <div className="col-span-2">
-              <span className="text-sm">Turma:</span>
-              <div className="border-b border-black text-center min-h-[25px]">
-                {selectedStudent?.Turma || '____'}
-              </div>
-            </div>
-            <div className="col-span-3">
-              <span className="text-sm">Turno:</span>
-              <div className="border-b border-black text-center min-h-[25px]">
-                {selectedStudent?.Turno || '________'}
-              </div>
-            </div>
-            <div className="col-span-3">
-              <span className="text-sm">Ano Letivo:</span>
-              <div className="border-b border-black text-center min-h-[25px]">
-                {selectedStudent?.['Ano Letivo'] || '________'}
-              </div>
-            </div>
-          </div>
-
-          {/* Professor */}
-          <div className="mb-14">
-            <div className="flex items-end gap-2">
-              <span className="text-sm font-bold whitespace-nowrap">Prof. (a):</span>
-              <div className="border-b border-black w-full text-lg min-h-[30px] px-2 italic">
-                {professor}
-              </div>
-            </div>
-          </div>
-
-          {/* Frase Central */}
-          <div className="text-center mb-20">
-            <h3 className="text-2xl font-bold italic">Requer sua Transferência</h3>
-          </div>
-
-          {/* Assinaturas */}
-          <div className="space-y-20">
-            <div className="flex items-end justify-between gap-8">
-              <div className="w-[180px] flex items-center gap-1">
-                <span className="text-sm">Data:</span>
-                <div className="border-b border-black flex-1 text-center font-bold">{docDate || '____/____/____'}</div>
-              </div>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full border-b border-black"></div>
-                <span className="text-[10px] font-bold mt-1 text-center">ASSINATURA DO ALUNO OU RESPONSÁVEL</span>
-              </div>
-            </div>
-
-            <div className="flex items-end justify-between gap-8">
-              <div className="w-[180px] flex items-center gap-1">
-                <span className="text-sm">Data:</span>
-                <div className="border-b border-black flex-1 text-center">____/____/____</div>
-              </div>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full border-b border-black"></div>
-                <span className="text-[10px] font-bold mt-1 text-center">RECEBI A DOCUMENTAÇÃO</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Deferimento */}
-          <div className="mt-auto pt-16 flex flex-col items-center">
-            <div className="w-full max-w-md border-b-2 border-black"></div>
-            <span className="text-xs font-bold mt-1 uppercase text-center">DEFERIMENTO DO DIRETOR/SECRETÁRIO</span>
+          <div className="official-font text-black leading-normal">
             
-            <div className="mt-10 text-center space-y-0.5">
-              <p className="text-sm font-bold uppercase tracking-[0.2em]">ESTADO DE GOIÁS</p>
-              <p className="text-sm font-bold uppercase tracking-[0.2em]">PREFEITURA MUNICIPAL DE FORMOSA</p>
-              <p className="text-sm font-bold uppercase tracking-[0.2em]">SECRETARIA MUNICIPAL DE EDUCAÇÃO</p>
+            {/* Cabeçalho Institucional com Brasão */}
+            <div className="flex items-center gap-6 mb-12">
+              <div className="w-24 h-24 shrink-0">
+                <svg viewBox="0 0 100 100" className="w-full h-full fill-slate-800">
+                  <path d="M50 5 L15 20 L15 50 C15 75 50 95 50 95 C50 95 85 75 85 50 L85 20 L50 5 Z" fill="none" stroke="currentColor" strokeWidth="2"/>
+                  <rect x="30" y="30" width="40" height="30" fill="none" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M30 45 H70 M50 30 V60" stroke="currentColor" strokeWidth="1"/>
+                  <text x="50" y="85" fontSize="8" textAnchor="middle" fontWeight="bold">FORMOSA</text>
+                </svg>
+              </div>
+              <div className="text-[12pt] font-bold leading-tight">
+                <p>ESTADO DE GOIÁS</p>
+                <p>PREFEITURA MUNICIPAL DE FORMOSA</p>
+                <p>SECRETARIA MUNICIPAL DE EDUCAÇÃO</p>
+              </div>
+            </div>
+
+            {/* Títulos */}
+            <div className="text-center mb-12">
+              <h1 className="text-[22pt] font-bold italic mb-8">Requerimento de Transferência</h1>
+              <h2 className="text-[12pt] font-normal uppercase tracking-wide">ESCOLA MUNICIPAL WALDA MIRANDA DE PAIVA</h2>
+            </div>
+
+            {/* Nome do Aluno (Linha com legenda abaixo) */}
+            <div className="mb-8">
+              <div className="border-b-2 border-black w-full min-h-[35px] flex items-end px-2 font-bold text-[14pt] uppercase">
+                {formData.nomeAluno}
+              </div>
+              <span className="line-label uppercase">Nome do Aluno</span>
+            </div>
+
+            {/* Linha de Info (Ano, Série, etc) */}
+            <div className="flex flex-wrap gap-x-4 gap-y-6 mb-8 text-[11pt]">
+              <div className="flex items-baseline">
+                <span className="mr-1">Ano:</span>
+                <span className="border-b border-black w-16 text-center font-bold px-1">{formData.ano}</span>
+              </div>
+              <div className="flex items-baseline">
+                <span className="mr-1">Série:</span>
+                <span className="border-b border-black w-16 text-center font-bold px-1">{formData.serie}</span>
+              </div>
+              <div className="flex items-baseline">
+                <span className="mr-1">Turma:</span>
+                <span className="border-b border-black w-12 text-center font-bold px-1">{formData.turma}</span>
+              </div>
+              <div className="flex items-baseline">
+                <span className="mr-1">Turno:</span>
+                <span className="border-b border-black w-32 text-center font-bold px-1">{formData.turno}</span>
+              </div>
+              <div className="flex items-baseline">
+                <span className="mr-1">Ano Letivo:</span>
+                <span className="border-b border-black w-24 text-center font-bold px-1">{formData.anoLetivo}</span>
+              </div>
+            </div>
+
+            {/* Professor */}
+            <div className="flex items-baseline mb-16">
+              <span className="mr-2">Prof. (a):</span>
+              <span className="border-b border-black flex-grow font-bold px-2">{formData.professor}</span>
+            </div>
+
+            {/* Mensagem Central */}
+            <div className="text-center font-bold text-[16pt] mb-20">
+              Requer sua Transferência
+            </div>
+
+            {/* Bloco de Datas e Assinaturas (Fiel ao layout da imagem) */}
+            <div className="space-y-16">
+              
+              {/* Assinatura do Aluno */}
+              <div className="flex gap-4">
+                <div className="w-[180px]">
+                  <div className="border-b border-black flex justify-around px-1 font-bold">
+                    <span>&nbsp;</span>/<span>&nbsp;</span>/<span>&nbsp;</span>
+                  </div>
+                  <span className="line-label uppercase">Data:</span>
+                </div>
+                <div className="flex-grow">
+                  <div className="border-b border-black h-[22px]"></div>
+                  <span className="line-label uppercase">Assinatura do Aluno ou Responsável</span>
+                </div>
+              </div>
+
+              {/* Recebi Documentação */}
+              <div className="flex gap-4">
+                <div className="w-[180px]">
+                  <div className="border-b border-black flex justify-around px-1 font-bold">
+                    <span>&nbsp;</span>/<span>&nbsp;</span>/<span>&nbsp;</span>
+                  </div>
+                  <span className="line-label uppercase">Data:</span>
+                </div>
+                <div className="flex-grow">
+                  <div className="border-b border-black h-[22px]"></div>
+                  <span className="line-label uppercase">Recebi a Documentação</span>
+                </div>
+              </div>
+
+              {/* Deferimento Final */}
+              <div className="mt-24 pt-8">
+                <div className="border-b border-black w-full h-[22px]"></div>
+                <span className="line-label uppercase">Deferimento do Diretor/Secretário</span>
+              </div>
+
             </div>
           </div>
-
         </div>
       </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media print {
-          body { background: white !important; margin: 0; padding: 0; }
-          .document-container { margin: 0 !important; box-shadow: none !important; }
-          @page { margin: 0; size: auto; }
-        }
-        
-        .font-serif {
-          font-family: "Times New Roman", Times, serif;
-        }
-      `}} />
     </div>
   );
 };
