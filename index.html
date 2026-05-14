@@ -96,9 +96,11 @@
             width: 100%;
         }
 
-        .date-input-container {
-            width: 180px;
-            text-align: center;
+        .date-side-container {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            min-width: 180px;
         }
 
         .sign-line-container {
@@ -116,15 +118,17 @@
             line-height: 1;
         }
 
+        /* Estrutura para data SEM negrito e com linha mais fina */
         .date-slots-underlined {
             display: flex;
             justify-content: center;
             align-items: flex-end;
             gap: 0;
-            font-weight: bold;
+            font-weight: normal; 
             min-height: 32px;
             border-bottom: 1px solid black; 
             padding-bottom: 0px; 
+            min-width: 130px;
         }
 
         .date-slot-item {
@@ -165,7 +169,7 @@
         .director-sign-img {
             max-height: 45px;
             object-fit: contain;
-            margin-bottom: -15px; /* Puxa a assinatura para cima da linha */
+            margin-bottom: -15px;
         }
     </style>
 </head>
@@ -459,7 +463,10 @@
 
                             <div className="space-y-16">
                                 <div className="signature-block">
-                                    <div className="date-input-container">{renderDateSlots(formData.dataRequerimento)}<span className="line-label-below uppercase">Data</span></div>
+                                    <div className="date-side-container">
+                                        <span className="text-[11pt] uppercase font-normal">Data:</span>
+                                        {renderDateSlots(formData.dataRequerimento)}
+                                    </div>
                                     <div className="sign-line-container">
                                         <div className="custom-line"></div>
                                         <span className="line-label-normal uppercase">Assinatura do Aluno ou Responsável</span>
@@ -467,10 +474,12 @@
                                 </div>
 
                                 <div className="signature-block">
-                                    <div className="date-input-container">{renderDateSlots(formData.dataRecebido)}<span className="line-label-below uppercase">Data</span></div>
+                                    <div className="date-side-container">
+                                        <span className="text-[11pt] uppercase font-normal">Data:</span>
+                                        {renderDateSlots(formData.dataRecebido)}
+                                    </div>
                                     <div className="sign-line-container">
                                         <div className="custom-line"></div>
-                                        {/* Removido o negrito conforme solicitado */}
                                         <span className="line-label-normal uppercase">Recebi a Documentação</span>
                                     </div>
                                 </div>
