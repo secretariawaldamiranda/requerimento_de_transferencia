@@ -108,28 +108,33 @@
             font-weight: bold;
         }
 
-        /* Estilo harmônico para a data com espaços */
+        /* Estilo harmônico para a data com barras juntas */
         .date-slots {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 4px;
+            gap: 0; /* Espaço zero entre os elementos */
             font-weight: bold;
             min-height: 28px;
         }
 
         .date-slot-item {
             border-bottom: 1.5px solid black;
-            min-width: 35px;
+            min-width: 32px;
             text-align: center;
             padding-bottom: 2px;
         }
 
         .date-slot-year {
             border-bottom: 1.5px solid black;
-            min-width: 50px;
+            min-width: 48px;
             text-align: center;
             padding-bottom: 2px;
+        }
+
+        .date-separator {
+            padding-bottom: 2px;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -178,7 +183,7 @@
                 window.print();
             };
 
-            // Função para renderizar a data em slots
+            // Função para renderizar a data em slots sem espaços
             const renderDateSlots = (dateString) => {
                 const parts = dateString.split('/');
                 const day = parts[0] || '';
@@ -188,9 +193,9 @@
                 return (
                     <div className="date-slots">
                         <div className={day ? "date-slot-item" : "date-slot-item text-transparent"}>{day || "___"}</div>
-                        <span>/</span>
+                        <span className="date-separator">/</span>
                         <div className={month ? "date-slot-item" : "date-slot-item text-transparent"}>{month || "___"}</div>
-                        <span>/</span>
+                        <span className="date-separator">/</span>
                         <div className={year ? "date-slot-year" : "date-slot-year text-transparent"}>{year || "____"}</div>
                     </div>
                 );
@@ -350,7 +355,7 @@
 
                             {/* Seção de Assinaturas Harmoniosa */}
                             <div className="space-y-16">
-                                {/* Primeira Assinatura (Data de hoje com aparência de slots) */}
+                                {/* Primeira Assinatura (Data de hoje sem espaços) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataHoje)}
@@ -362,7 +367,7 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura (Aparência idêntica mas em branco) */}
+                                {/* Segunda Assinatura (Em branco sem espaços) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots("")}
