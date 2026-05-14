@@ -85,7 +85,7 @@
             align-items: baseline;
             justify-content: center;
             width: 100%;
-            gap: 12px;
+            gap: 16px; /* Aumentado o espaçamento entre colunas */
             white-space: nowrap;
         }
         
@@ -196,7 +196,6 @@
             const [formData, setFormData] = useState({
                 nomeAluno: '',
                 ano: '',
-                serie: '',
                 turma: '',
                 turno: '',
                 anoLetivo: new Date().getFullYear().toString(),
@@ -269,7 +268,6 @@
                     ...formData,
                     nomeAluno: student.nome,
                     ano: student.ano,
-                    serie: '\u00A0', 
                     turma: student.turma,
                     turno: student.turno
                 });
@@ -364,14 +362,10 @@
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Ano</label>
                                     <input name="ano" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.ano} onChange={handleChange} />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Série</label>
-                                    <input name="serie" className="w-full p-2 border-2 border-slate-200 rounded text-sm" value={formData.serie === '\u00A0' ? '' : formData.serie} onChange={handleChange} />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Turma</label>
@@ -407,6 +401,7 @@
                         </div>
                     </div>
 
+                    {/* Área do Documento */}
                     <div className="flex-1 flex justify-center p-4 lg:p-10 overflow-y-auto bg-slate-200 print:bg-white print:p-0">
                         <div className="print-area bg-white w-full max-w-[21cm] min-h-[29.7cm] shadow-2xl p-[1.5cm] lg:p-[2.5cm] text-black official-doc-font box-border">
                             
@@ -428,32 +423,26 @@
 
                             <div className="mb-10 mt-14">
                                 <div className="custom-line w-full text-[14pt] uppercase">{formData.nomeAluno}</div>
-                                {/* Legenda "Nome do Aluno" alterada para 14pt (line-label-14) */}
                                 <span className="line-label-14 uppercase">Nome do Aluno</span>
                             </div>
 
-                            <div className="info-row mb-10 text-[11pt]">
+                            {/* Informações Escolares em 14pt */}
+                            <div className="info-row mb-10 text-[14pt]">
                                 <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano:</span>
-                                    <div className="border-b border-black w-[80px] text-center font-bold min-h-[1.2rem]">{formData.ano}</div>
-                                </div>
-                                <div className="flex items-baseline shrink-0">
-                                    <span className="mr-1">Série:</span>
-                                    <div className="border-b border-black w-[80px] text-center font-bold min-h-[1.2rem]">
-                                        {formData.serie || '\u00A0'}
-                                    </div>
+                                    <div className="border-b border-black w-[130px] text-center font-bold min-h-[1.5rem]">{formData.ano}</div>
                                 </div>
                                 <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Turma:</span>
-                                    <div className="border-b border-black w-[60px] text-center font-bold min-h-[1.2rem]">{formData.turma}</div>
+                                    <div className="border-b border-black w-[110px] text-center font-bold min-h-[1.5rem]">{formData.turma}</div>
                                 </div>
-                                <div className="flex items-baseline min-w-[160px]">
+                                <div className="flex items-baseline min-w-[210px]">
                                     <span className="mr-1">Turno:</span>
-                                    <div className="border-b border-black flex-grow text-center font-bold uppercase min-h-[1.2rem]">{formData.turno}</div>
+                                    <div className="border-b border-black flex-grow text-center font-bold uppercase min-h-[1.5rem]">{formData.turno}</div>
                                 </div>
                                 <div className="flex items-baseline shrink-0">
                                     <span className="mr-1">Ano Letivo:</span>
-                                    <div className="border-b border-black w-[90px] text-center font-bold min-h-[1.2rem]">{formData.anoLetivo}</div>
+                                    <div className="border-b border-black w-[130px] text-center font-bold min-h-[1.5rem]">{formData.anoLetivo}</div>
                                 </div>
                             </div>
 
