@@ -89,10 +89,9 @@
             white-space: nowrap;
         }
         
-        /* Bloco de assinatura ajustado para alinhamento superior das linhas */
         .signature-block {
             display: flex;
-            align-items: flex-start; /* Alinha o topo (linhas) */
+            align-items: flex-start;
             gap: 20px;
             width: 100%;
         }
@@ -102,18 +101,12 @@
             align-items: baseline;
             gap: 6px;
             min-width: 220px;
-            /* Ajustado para nivelar com a assinatura */
             padding-top: 8px; 
         }
 
         .sign-line-container {
             flex-grow: 1;
-            /* Ajustado para descer e alinhar com a data ao lado */
             padding-top: 8px; 
-        }
-
-        .sign-line-container-director {
-            flex-grow: 1;
         }
 
         .custom-line {
@@ -127,7 +120,6 @@
             line-height: 1;
         }
 
-        /* Estrutura para data 14pt */
         .date-slots-underlined {
             display: flex;
             justify-content: center;
@@ -436,7 +428,8 @@
 
                             <div className="mb-10 mt-14">
                                 <div className="custom-line w-full text-[14pt] uppercase">{formData.nomeAluno}</div>
-                                <span className="line-label-normal uppercase">Nome do Aluno</span>
+                                {/* Legenda "Nome do Aluno" alterada para 14pt (line-label-14) */}
+                                <span className="line-label-14 uppercase">Nome do Aluno</span>
                             </div>
 
                             <div className="info-row mb-10 text-[11pt]">
@@ -472,7 +465,6 @@
                             <div className="text-center font-bold text-[18pt] my-20 uppercase tracking-wide">Requer sua Transferência</div>
 
                             <div className="space-y-16">
-                                {/* Primeiro Bloco de Assinatura Alinhado */}
                                 <div className="signature-block">
                                     <div className="date-side-wrapper">
                                         <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
@@ -484,7 +476,6 @@
                                     </div>
                                 </div>
 
-                                {/* Segundo Bloco de Assinatura Alinhado */}
                                 <div className="signature-block">
                                     <div className="date-side-wrapper">
                                         <span className="text-[14pt] uppercase font-normal whitespace-nowrap">Data:</span>
