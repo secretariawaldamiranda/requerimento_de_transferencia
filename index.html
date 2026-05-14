@@ -101,40 +101,39 @@
         .custom-line {
             border-bottom: 1.5px solid black;
             padding-bottom: 2px;
-            min-height: 28px;
+            min-height: 32px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
             font-weight: bold;
         }
 
-        /* Estilo harmônico para a data com barras juntas */
-        .date-slots {
+        /* Nova estrutura para data "tocando" a linha */
+        .date-slots-underlined {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 0; /* Espaço zero entre os elementos */
+            gap: 0;
             font-weight: bold;
-            min-height: 28px;
+            min-height: 32px;
+            border-bottom: 1.5px solid black; /* Linha única para todo o bloco de data */
+            padding-bottom: 2px; /* Espaço mínimo para não "cortar" as letras */
         }
 
         .date-slot-item {
-            border-bottom: 1.5px solid black;
             min-width: 32px;
             text-align: center;
-            padding-bottom: 2px;
         }
 
         .date-slot-year {
-            border-bottom: 1.5px solid black;
             min-width: 48px;
             text-align: center;
-            padding-bottom: 2px;
         }
 
         .date-separator {
-            padding-bottom: 2px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 0 2px;
         }
     </style>
 </head>
@@ -183,7 +182,7 @@
                 window.print();
             };
 
-            // Função para renderizar a data em slots sem espaços
+            // Função para renderizar a data em slots tocando a linha única
             const renderDateSlots = (dateString) => {
                 const parts = dateString.split('/');
                 const day = parts[0] || '';
@@ -191,12 +190,12 @@
                 const year = parts[2] || '';
 
                 return (
-                    <div className="date-slots">
-                        <div className={day ? "date-slot-item" : "date-slot-item text-transparent"}>{day || "___"}</div>
+                    <div className="date-slots-underlined">
+                        <div className="date-slot-item">{day || "___"}</div>
                         <span className="date-separator">/</span>
-                        <div className={month ? "date-slot-item" : "date-slot-item text-transparent"}>{month || "___"}</div>
+                        <div className="date-slot-item">{month || "___"}</div>
                         <span className="date-separator">/</span>
-                        <div className={year ? "date-slot-year" : "date-slot-year text-transparent"}>{year || "____"}</div>
+                        <div className="date-slot-year">{year || "____"}</div>
                     </div>
                 );
             };
@@ -355,7 +354,7 @@
 
                             {/* Seção de Assinaturas Harmoniosa */}
                             <div className="space-y-16">
-                                {/* Primeira Assinatura (Data de hoje sem espaços) */}
+                                {/* Primeira Assinatura (Data sobre a linha) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots(formData.dataHoje)}
@@ -367,7 +366,7 @@
                                     </div>
                                 </div>
 
-                                {/* Segunda Assinatura (Em branco sem espaços) */}
+                                {/* Segunda Assinatura (Vazia sobre a linha) */}
                                 <div className="signature-block">
                                     <div className="date-input-container">
                                         {renderDateSlots("")}
