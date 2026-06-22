@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,11 +7,11 @@
     <!-- Tailwind CSS para o design -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React e Babel para funcionar direto no navegador -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
@@ -177,13 +176,35 @@
         <p>Se essa mensagem não sumir, algum script do site não carregou.</p>
     </div>
 </div>
+    <script>
+        window.addEventListener('error', function(event) {
+            const root = document.getElementById('root');
+            if (root && root.innerText.includes('Carregando o requerimento')) {
+                root.innerHTML = `
+                    <div style="padding:30px;font-family:Arial,sans-serif;text-align:center;color:#7f1d1d;">
+                        <h2>Erro ao carregar o requerimento</h2>
+                        <p>Algum script do site não carregou corretamente.</p>
+                        <p style="font-size:13px;"><strong>Detalhe:</strong> ${event.message || 'Erro desconhecido'}</p>
+                    </div>
+                `;
+            }
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Erro não tratado:', event.reason);
+        });
+    </script>
+
     <script type="text/babel">
         const { useState, useEffect } = React;
 
         function App() {
             const getTodayISODate = () => {
                 const now = new Date();
-                return now.toISOString().split('T')[0];
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             };
 
             const [logo, setLogo] = useState('./brasao.png');
@@ -206,37 +227,61 @@
                 const autoFetchCsv = async () => {
                     setLoadStatus('loading');
                     try {
-                        const response = await fetch('./CUBO.CSV');
+                        const csvUrl = new URL('CUBO.CSV', window.location.href);
+                        csvUrl.searchParams.set('v', Date.now().toString());
+
+                        const response = await fetch(csvUrl.toString(), { cache: 'no-store' });
+
                         if (response.ok) {
                             const text = await response.text();
                             parseCsv(text);
                             setLoadStatus('success');
                         } else {
+                            console.warn('CUBO.CSV não encontrado:', response.status);
                             setLoadStatus('error');
                         }
                     } catch (err) {
+                        console.error('Erro ao carregar CUBO.CSV:', err);
                         setLoadStatus('error');
                     }
                 };
                 autoFetchCsv();
             }, []);
 
+            useEffect(() => {
+                if (window.lucide) {
+                    window.requestAnimationFrame(() => {
+                        lucide.createIcons();
+                    });
+                }
+            });
+
             const parseCsv = (text) => {
-                const lines = text.split(/\r?\n/);
+                const cleanedText = text.replace(/^\uFEFF/, '');
+                const lines = cleanedText.split(/\r?\n/).filter(line => line.trim() !== "");
                 const result = [];
+
+                if (lines.length === 0) {
+                    setCsvData([]);
+                    return;
+                }
+
+                const separator = lines[0].includes(';') ? ';' : ',';
                 const startIdx = lines[0].toLowerCase().includes('aluno') ? 1 : 0;
+
                 for (let i = startIdx; i < lines.length; i++) {
-                    if (lines[i].trim() === "") continue;
-                    const columns = lines[i].split(';');
+                    const columns = lines[i].split(separator);
+
                     if (columns.length >= 4) {
                         result.push({
-                            nome: columns[0].trim().toUpperCase(),
-                            ano: columns[1].trim(),
-                            turma: columns[2].trim(),
-                            turno: columns[3].trim()
+                            nome: (columns[0] || '').trim().toUpperCase(),
+                            ano: (columns[1] || '').trim(),
+                            turma: (columns[2] || '').trim(),
+                            turno: (columns[3] || '').trim()
                         });
                     }
                 }
+
                 setCsvData(result);
             };
 
@@ -299,7 +344,7 @@
             };
 
             const filteredStudents = csvData.filter(s => 
-                s.nome.toLowerCase().includes(searchTerm.toLowerCase())
+                s.nome && s.nome.toLowerCase().includes(searchTerm.toLowerCase())
             ).slice(0, 15);
 
             return (
@@ -458,9 +503,18 @@
                 </div>
             );
         }
+        if (!window.React || !window.ReactDOM) {
+            throw new Error('React ou ReactDOM não carregou. Verifique a conexão ou os links CDN.');
+        }
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
-        setTimeout(() => lucide.createIcons(), 500);
+
+        setTimeout(() => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }, 500);
     </script>
 </body>
 </html>
