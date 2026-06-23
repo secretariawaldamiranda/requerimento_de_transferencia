@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Requerimento - Escola Walda Miranda de Paiva</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #e2e8f0;
+            color: #0f172a;
+            font-family: Inter, Arial, sans-serif;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 360px;
+            flex-shrink: 0;
+            padding: 24px;
+            background: #ffffff;
+            border-right: 1px solid #cbd5e1;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.16);
+            z-index: 10;
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            color: #1e3a8a;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-title h1 {
+            margin: 0;
+            font-size: 20px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .panel-stack {
+            display: grid;
+            gap: 16px;
+        }
+
+        .status-box,
+        .help-box {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .status-success {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #15803d;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            font-weight: 700;
+        }
+
+        .status-warning {
+            color: #92400e;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            text-align: center;
+        }
+
+        .status-warning p {
+            margin: 0 0 8px;
+            font-weight: 700;
+        }
+
+        .file-label {
+            color: #2563eb;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .help-box {
+            color: #1e3a8a;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+
+        .help-box p {
+            margin: 0;
+        }
+
+        .help-box strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .action-button {
+            width: 100%;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .button-primary {
+            min-height: 56px;
+            color: white;
+            background: #1d4ed8;
+            box-shadow: 0 12px 24px rgba(29, 78, 216, 0.22);
+        }
+
+        .button-primary:hover {
+            background: #1e40af;
+        }
+
+        .button-secondary {
+            color: #1e293b;
+            background: #e2e8f0;
+        }
+
+        .button-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .print-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 32px;
+            overflow-y: auto;
+            background: #e2e8f0;
+        }
+
+        .official-doc-font {
+            font-family: Arial, sans-serif;
+        }
+
+        .paper-size {
+            width: 210mm;
+            min-height: 297mm;
+        }
+
+        .print-area {
+            padding: 18mm;
+            background: white;
+            color: black;
+            box-shadow: 0 25px 55px rgba(15, 23, 42, 0.22);
+        }
+
+        .doc-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .crest-container {
+            width: 115px;
+            height: 115px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .crest-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .header-text {
+            font-size: 16pt;
+            font-weight: 700;
+            line-height: 1.25;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .header-text p {
+            margin: 0;
+        }
+
+        .title-block {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .document-title {
+            margin: 0 0 32px;
+            font-size: 26pt;
+            font-weight: 700;
+            font-style: italic;
+            line-height: 1.1;
+        }
+
+        .school-name {
+            margin: 32px 0 0;
+            font-size: 13pt;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .line-label-normal,
+        .line-label-14 {
+            display: block;
+            margin-top: 4px;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .line-label-normal {
+            font-size: 10pt;
+        }
+
+        .line-label-14 {
+            font-size: 14pt;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .doc-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: black;
+            vertical-align: bottom;
+        }
+
+        .doc-name-wrapper {
+            position: relative;
+            margin: 56px 0 40px;
+        }
+
+        .doc-name-input {
+            width: 100%;
+            height: 32px;
+            padding: 8px 4px 0;
+            border-bottom: 1px solid black;
+            font-size: 14pt;
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .school-info {
+            width: 100%;
+            margin-bottom: 48px;
+        }
+
+        .school-info-line {
+            display: grid;
+            grid-template-columns: 36px 110px 55px 45px 56px 120px 88px 78px;
+            align-items: end;
+            column-gap: 5px;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        .info-label {
+            font-size: 13.5pt;
+            font-weight: 400;
+            line-height: 1.6rem;
+            white-space: nowrap;
+        }
+
+        .doc-small-input {
+            width: 100%;
+            height: 1.6rem;
+            padding: 6px 3px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid black;
+            outline: none;
+            color: black;
+            font-family: Arial, sans-serif;
+            font-size: 12.8pt;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            text-transform: uppercase;
+            vertical-align: bottom;
+        }
+
+        .request-text {
+            margin-bottom: 48px;
+            font-size: 18pt;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .signature-stack {
+            display: grid;
+            gap: 64px;
+        }
+
+        .signature-block {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: start;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .date-side-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            padding-top: 8px;
+            white-space: nowrap;
+        }
+
+        .date-label {
+            font-size: 14pt;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        .date-picker-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .date-picker-display {
+            min-width: 128px;
+            height: 32px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0 8px 1px;
+            border-bottom: 1px solid black;
+            color: black;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 14pt;
+            font-weight: 400;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .date-picker-display:hover {
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .date-display-part {
+            display: inline-block;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .date-display-day,
+        .date-display-month {
+            width: 30px;
+        }
+
+        .date-display-year {
+            width: 50px;
+        }
+
+        .date-display-separator {
+            display: inline-block;
+            width: 8px;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .date-empty-space {
+            color: transparent;
+        }
+
+        .calendar-real-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 128px;
+            height: 32px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sign-line-container {
+            width: 100%;
+            padding-top: 8px;
+        }
+
+        .doc-sign-input {
+            width: 100%;
+            height: 32px;
+            padding: 8px 4px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid black;
+            outline: none;
+            color: black;
+            font-family: Arial, sans-serif;
+            font-size: 13pt;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            vertical-align: bottom;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            top: 38px;
+            left: 0;
+            z-index: 50;
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+            font-family: Inter, sans-serif;
+            text-align: left;
+        }
+
+        .suggestion-item,
+        .suggestion-empty {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .suggestion-item {
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: 0;
+        }
+
+        .suggestion-item:hover {
+            color: white;
+            background: #2563eb;
+        }
+
+        .suggestion-meta {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .suggestion-empty {
+            color: #64748b;
+            text-align: center;
+        }
+
+        .director-signature {
+            margin-top: 96px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .director-sign-img {
+            max-height: 45px;
+            object-fit: contain;
+            margin-bottom: -15px;
+        }
+
+        .director-line {
+            width: 100%;
+            height: 0;
+            border-bottom: 1px solid black;
+        }
+
+        .director-label {
+            font-size: 14pt;
+            text-transform: uppercase;
+        }
+
+        @media screen and (max-width: 900px) {
+            .app-shell {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: 0;
+                border-bottom: 1px solid #cbd5e1;
+            }
+
+            .print-wrapper {
+                padding: 16px;
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+
+            .paper-size {
+                width: 210mm;
+                min-width: 210mm;
+            }
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            html,
+            body {
+                width: 210mm;
+                min-height: 297mm;
+                background: white !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .app-shell {
+                display: block;
+                min-height: auto;
+            }
+
+            .print-wrapper {
+                display: block;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+                overflow: visible !important;
+            }
+
+            .print-area {
+                width: 210mm !important;
+                min-height: 297mm !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 15mm !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            input {
+                background: transparent !important;
+                color: black !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            input::placeholder {
+                color: transparent !important;
+            }
+
+            .date-picker-display {
+                cursor: default !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="app-shell">
+        <aside class="sidebar no-print">
+            <div class="sidebar-title">
+                <h1>Requerimento</h1>
+            </div>
+
+            <div class="panel-stack">
+                <div id="loadStatusBox" class="status-box status-warning">
+                    <p>CUBO.CSV não carregado automaticamente.</p>
+                    <label class="file-label">
+                        Carregar CUBO.CSV manualmente
+                        <input id="csvFileInput" class="hidden-input" type="file" accept=".csv">
+                    </label>
+                </div>
+
+                <div class="help-box">
+                    <p><strong>Como preencher:</strong></p>
+                    <p>Clique direto nas linhas da folha. Para corrigir datas, clique na data e escolha pelo calendário.</p>
+                </div>
+
+                <button id="printButton" class="action-button button-primary" type="button">
+                    IMPRIMIR
+                </button>
+
+                <button id="clearButton" class="action-button button-secondary" type="button">
+                    LIMPAR FOLHA
+                </button>
+            </div>
+        </aside>
+
+        <section class="print-wrapper">
+            <article class="print-area paper-size official-doc-font">
+                <header class="doc-header">
+                    <div class="crest-container">
+                        <img id="crestImage" src="./brasao.png" alt="Brasão" class="crest-img">
+                    </div>
+
+                    <div class="header-text">
+                        <p>Estado de Goiás</p>
+                        <p>Prefeitura Municipal de Formosa</p>
+                        <p>Secretaria Municipal de Educação</p>
+                    </div>
+                </header>
+
+                <section class="title-block">
+                    <h1 class="document-title">Requerimento de Transferência</h1>
+                    <h2 class="school-name">Escola Municipal Walda Miranda de Paiva</h2>
+                </section>
+
+                <section class="doc-name-wrapper">
+                    <input id="nomeAluno" name="nomeAluno" class="doc-input doc-name-input" autocomplete="off">
+                    <div id="suggestionsList" class="suggestions-list no-print" hidden></div>
+                    <span class="line-label-14 uppercase">Nome do Aluno</span>
+                </section>
+
+                <section class="school-info">
+                    <div class="school-info-line">
+                        <span class="info-label">Ano:</span>
+                        <input id="ano" name="ano" class="doc-small-input">
+
+                        <span class="info-label">Turma:</span>
+                        <input id="turma" name="turma" class="doc-small-input">
+
+                        <span class="info-label">Turno:</span>
+                        <input id="turno" name="turno" class="doc-small-input">
+
+                        <span class="info-label">Ano Letivo:</span>
+                        <input id="anoLetivo" name="anoLetivo" class="doc-small-input">
+                    </div>
+                </section>
+
+                <div class="request-text">Requer sua Transferência</div>
+
+                <section class="signature-stack">
+                    <div class="signature-block">
+                        <div class="date-side-wrapper">
+                            <span class="date-label">Data:</span>
+                            <div class="date-picker-wrapper">
+                                <div id="dataRequerimentoDisplay" class="date-picker-display" role="button" tabindex="0" title="Clique para escolher a data"></div>
+                                <input id="dataRequerimento" name="dataRequerimento" class="calendar-real-input" type="date" tabindex="-1">
+                            </div>
+                        </div>
+
+                        <div class="sign-line-container">
+                            <input id="assinaturaResponsavel" name="assinaturaResponsavel" class="doc-sign-input">
+                            <span class="line-label-14 uppercase">Assinatura do Aluno ou Responsável</span>
+                        </div>
+                    </div>
+
+                    <div class="signature-block">
+                        <div class="date-side-wrapper">
+                            <span class="date-label">Data:</span>
+                            <div class="date-picker-wrapper">
+                                <div id="dataRecebidoDisplay" class="date-picker-display" role="button" tabindex="0" title="Clique para escolher a data"></div>
+                                <input id="dataRecebido" name="dataRecebido" class="calendar-real-input" type="date" tabindex="-1">
+                            </div>
+                        </div>
+
+                        <div class="sign-line-container">
+                            <input id="recebiDocumentacao" name="recebiDocumentacao" class="doc-sign-input">
+                            <span class="line-label-14 uppercase">Recebi a Documentação</span>
+                        </div>
+                    </div>
+
+                    <div class="director-signature">
+                        <img id="directorSignatureImage" src="./assinatura.png" alt="Assinatura" class="director-sign-img">
+                        <div class="director-line"></div>
+                        <span class="line-label-normal director-label">Deferimento do Diretor / Secretário</span>
+                    </div>
+                </section>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const state = {
+            csvData: [],
+            searchTerm: '',
+            showSuggestions: false
+        };
+
+        const fields = {
+            nomeAluno: document.getElementById('nomeAluno'),
+            ano: document.getElementById('ano'),
+            turma: document.getElementById('turma'),
+            turno: document.getElementById('turno'),
+            anoLetivo: document.getElementById('anoLetivo'),
+            dataRequerimento: document.getElementById('dataRequerimento'),
+            dataRecebido: document.getElementById('dataRecebido'),
+            assinaturaResponsavel: document.getElementById('assinaturaResponsavel'),
+            recebiDocumentacao: document.getElementById('recebiDocumentacao')
+        };
+
+        const loadStatusBox = document.getElementById('loadStatusBox');
+        const suggestionsList = document.getElementById('suggestionsList');
+        const csvFileInput = document.getElementById('csvFileInput');
+        const printButton = document.getElementById('printButton');
+        const clearButton = document.getElementById('clearButton');
+        const crestImage = document.getElementById('crestImage');
+        const directorSignatureImage = document.getElementById('directorSignatureImage');
+
+        function getTodayISODate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+        function getDateParts(isoDate) {
+            if (!isoDate) {
+                return { day: '', month: '', year: '' };
+            }
+
+            const [year, month, day] = isoDate.split('-');
+
+            return {
+                day: day || '',
+                month: month || '',
+                year: year || ''
+            };
+        }
+
+        function normalizeText(text) {
+            return String(text || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function setLoadStatus(status) {
+            if (status === 'success') {
+                loadStatusBox.className = 'status-box status-success';
+                loadStatusBox.textContent = `${state.csvData.length} alunos carregados.`;
+                return;
+            }
+
+            loadStatusBox.className = 'status-box status-warning';
+            loadStatusBox.innerHTML = `
+                <p>CUBO.CSV não carregado automaticamente.</p>
+                <label class="file-label">
+                    Carregar CUBO.CSV manualmente
+                    <input id="csvFileInputReplacement" class="hidden-input" type="file" accept=".csv">
+                </label>
+            `;
+
+            document
+                .getElementById('csvFileInputReplacement')
+                .addEventListener('change', handleCsvUploadManual);
+        }
+
+        function parseCsv(text) {
+            const lines = String(text || '').split(/\r?\n/);
+            const result = [];
+            const startIndex = lines[0] && lines[0].toLowerCase().includes('aluno') ? 1 : 0;
+
+            for (let i = startIndex; i < lines.length; i += 1) {
+                if (!lines[i].trim()) continue;
+
+                const columns = lines[i].split(';');
+
+                if (columns.length >= 4) {
+                    result.push({
+                        nome: columns[0].trim().toUpperCase(),
+                        ano: columns[1].trim().toUpperCase(),
+                        turma: columns[2].trim().toUpperCase(),
+                        turno: columns[3].trim().toUpperCase()
+                    });
+                }
+            }
+
+            result.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+            state.csvData = result;
+            setLoadStatus('success');
+        }
+
+        async function autoFetchCsv() {
+            try {
+                const response = await fetch('./CUBO.CSV');
+
+                if (!response.ok) {
+                    setLoadStatus('error');
+                    return;
+                }
+
+                const text = await response.text();
+                parseCsv(text);
+            } catch (error) {
+                setLoadStatus('error');
+            }
+        }
+
+        function handleCsvUploadManual(event) {
+            const file = event.target.files && event.target.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = (readerEvent) => {
+                parseCsv(readerEvent.target.result);
+            };
+
+            reader.readAsText(file);
+        }
+
+        function renderDate(displayElement, isoDate) {
+            const parts = getDateParts(isoDate);
+
+            displayElement.innerHTML = `
+                <span class="date-display-part date-display-day ${parts.day ? '' : 'date-empty-space'}">${parts.day || '00'}</span>
+                <span class="date-display-separator">/</span>
+                <span class="date-display-part date-display-month ${parts.month ? '' : 'date-empty-space'}">${parts.month || '00'}</span>
+                <span class="date-display-separator">/</span>
+                <span class="date-display-part date-display-year ${parts.year ? '' : 'date-empty-space'}">${parts.year || '0000'}</span>
+            `;
+        }
+
+        function openCalendar(input) {
+            if (!input) return;
+
+            if (typeof input.showPicker === 'function') {
+                input.showPicker();
+            } else {
+                input.focus();
+                input.click();
+            }
+        }
+
+        function setupDatePicker(inputId, displayId) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(displayId);
+
+            const sync = () => renderDate(display, input.value);
+
+            display.addEventListener('click', () => openCalendar(input));
+            display.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openCalendar(input);
+                }
+            });
+            input.addEventListener('change', sync);
+
+            sync();
+        }
+
+        function getFilteredStudents() {
+            const term = normalizeText(state.searchTerm);
+
+            if (!term) return [];
+
+            return state.csvData
+                .filter((student) => {
+                    const name = normalizeText(student.nome);
+
+                    if (term.length === 1) {
+                        return name.startsWith(term);
+                    }
+
+                    return name.startsWith(term) || name.includes(term);
+                })
+                .sort((a, b) => {
+                    const nameA = normalizeText(a.nome);
+                    const nameB = normalizeText(b.nome);
+                    const startsA = nameA.startsWith(term);
+                    const startsB = nameB.startsWith(term);
+
+                    if (startsA && !startsB) return -1;
+                    if (!startsA && startsB) return 1;
+
+                    return a.nome.localeCompare(b.nome, 'pt-BR');
+                })
+                .slice(0, 15);
+        }
+
+        function selectStudent(student) {
+            fields.nomeAluno.value = student.nome;
+            fields.ano.value = student.ano;
+            fields.turma.value = student.turma;
+            fields.turno.value = student.turno;
+            state.searchTerm = student.nome;
+            state.showSuggestions = false;
+            renderSuggestions();
+        }
+
+        function renderSuggestions() {
+            if (!state.showSuggestions || !state.searchTerm || state.csvData.length === 0) {
+                suggestionsList.hidden = true;
+                suggestionsList.innerHTML = '';
+                return;
+            }
+
+            const students = getFilteredStudents();
+            suggestionsList.hidden = false;
+            suggestionsList.innerHTML = '';
+
+            if (students.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'suggestion-empty';
+                empty.textContent = 'Nenhum aluno encontrado';
+                suggestionsList.appendChild(empty);
+                return;
+            }
+
+            students.forEach((student) => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.textContent = student.nome;
+
+                const meta = document.createElement('span');
+                meta.className = 'suggestion-meta';
+                meta.textContent = ` (${student.ano} ${student.turma} - ${student.turno})`;
+
+                item.appendChild(meta);
+                item.addEventListener('click', () => selectStudent(student));
+                suggestionsList.appendChild(item);
+            });
+        }
+
+        function uppercaseFieldValue(input) {
+            input.value = input.value.toUpperCase();
+        }
+
+        function clearForm() {
+            fields.nomeAluno.value = '';
+            fields.ano.value = '';
+            fields.turma.value = '';
+            fields.turno.value = '';
+            fields.anoLetivo.value = String(new Date().getFullYear());
+            fields.dataRequerimento.value = getTodayISODate();
+            fields.dataRecebido.value = '';
+            fields.assinaturaResponsavel.value = '';
+            fields.recebiDocumentacao.value = '';
+            state.searchTerm = '';
+            state.showSuggestions = false;
+            renderSuggestions();
+            renderDate(document.getElementById('dataRequerimentoDisplay'), fields.dataRequerimento.value);
+            renderDate(document.getElementById('dataRecebidoDisplay'), fields.dataRecebido.value);
+        }
+
+        function handlePrint() {
+            state.showSuggestions = false;
+            renderSuggestions();
+
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+
+        function setupEvents() {
+            ['nomeAluno', 'ano', 'turma', 'turno'].forEach((fieldName) => {
+                fields[fieldName].addEventListener('input', () => uppercaseFieldValue(fields[fieldName]));
+            });
+
+            fields.nomeAluno.addEventListener('input', () => {
+                state.searchTerm = fields.nomeAluno.value;
+                state.showSuggestions = true;
+                renderSuggestions();
+            });
+
+            fields.nomeAluno.addEventListener('focus', () => {
+                if (fields.nomeAluno.value) {
+                    state.searchTerm = fields.nomeAluno.value;
+                    state.showSuggestions = true;
+                    renderSuggestions();
+                }
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('.doc-name-wrapper')) {
+                    state.showSuggestions = false;
+                    renderSuggestions();
+                }
+            });
+
+            csvFileInput.addEventListener('change', handleCsvUploadManual);
+            printButton.addEventListener('click', handlePrint);
+            clearButton.addEventListener('click', clearForm);
+
+            crestImage.addEventListener('error', () => {
+                crestImage.src = 'https://via.placeholder.com/120?text=BRASAO';
+            });
+
+            directorSignatureImage.addEventListener('error', () => {
+                directorSignatureImage.style.display = 'none';
+            });
+        }
+
+        function init() {
+            fields.anoLetivo.value = String(new Date().getFullYear());
+            fields.dataRequerimento.value = getTodayISODate();
+            fields.dataRecebido.value = '';
+
+            setupEvents();
+            setupDatePicker('dataRequerimento', 'dataRequerimentoDisplay');
+            setupDatePicker('dataRecebido', 'dataRecebidoDisplay');
+            autoFetchCsv();
+        }
+
+        init();
+    </script>
+</body>
+</html>
